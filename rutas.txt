@@ -37,3 +37,36 @@ PUT
 
 /pedidos/current/?date,status,amount,
 
+
+POV: soy un punto de acceso y dependiendo de quien acceda permito hacer determinadas cosas.
+
+HICE UN CRUD DE TODOS LAS ENTIDADES?
+
+
+POST /login
+    OK  devuelvo el token
+    F   mensaje de error
+
+GET /users/:id
+    ok  devuleve la info basica del usuario + listado de platos favoritos
+PUT /users/:id
+    ok  actualiza datos del cliente
+GET /users
+    ok  me trae a todos los lcientes
+post /users
+    OK  usuario creado redirecciona a la pagina de login
+    F   mensaje de error, ej usuario duplicado o correo existente.informar
+
+GET /dishes
+    OK  Lista todos los productos del local
+
+POST /orders
+    OK  crea el pedido. devolver numero de pedido
+GET /orders/:id
+    ok  info del pedido
+DELETE /orders/:id
+    ok  ME CANCELA EL PEDIDO
+GET /orders?at="dia"&before="dia"&after="dia"
+    ok  array de todos los orders
+    si no tiene nada. del día
+    si tiene atalguno hace el or de la busqueda... and de before y after y or de array.

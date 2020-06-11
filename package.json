@@ -4,7 +4,8 @@
   "description": "Third and last project of Acamica",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/wgnr/delilah-resto/issues"
   },
-  "homepage": "https://github.com/wgnr/delilah-resto#readme"
+  "homepage": "https://github.com/wgnr/delilah-resto#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
