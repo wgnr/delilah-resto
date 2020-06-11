@@ -1,0 +1,30 @@
+{
+  "name": "delilah-resto",
+  "version": "1.0.0",
+  "description": "Third and last project of Acamica",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wgnr/delilah-resto.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "jwt",
+    "Acamica",
+    "Full",
+    "Stack",
+    "Web",
+    "Development",
+    "JavaScript"
+  ],
+  "author": "Juan Wagner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wgnr/delilah-resto/issues"
+  },
+  "homepage": "https://github.com/wgnr/delilah-resto#readme"
+}

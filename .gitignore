@@ -1,3 +1,15 @@
+###########
+# My .gitignore
+design/ # Here I store the "guide" of this project.
+!design/delilah_exports # Show me reference images for the project
+	
+# Windows files
+**/[Dd]esktop.ini
+
+
+###########
+# Default values for nodejs
+
 # Logs
 logs
 *.log

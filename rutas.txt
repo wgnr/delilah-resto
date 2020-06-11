@@ -1,0 +1,39 @@
+POV: Soy un restaurant, y tengo platos, clientes y sus pedidos.
+
+GET / POST / PUT / DELETE
+
+/authentication?username=USERNAME&password=PASSWORD
+
+/clients
+GET: Trae todos mis clientes.
+POST: Crea un nuevo cliente. En su body un JSON con toda la datita.
+DELETE: Borra bulk clientes.
+
+/clientes/{id}
+GET: Trae info del cliente.
+PUT: Actualiza los datos del cliente.
+DELETE: Borra al cliente.
+
+/platos
+GET: Trae todos los platos
+POST: Crea un nuevo plato
+DELETE: Borra todos los platos
+
+/platos/{id}
+GET: Trae info del plato
+PUT: Actualiza el plato.
+DELETE: borra el plato.
+
+
+TENGO UN SERVICIO ORIENTADO EN LOS PEDIDOS!
+/pedidos
+GET
+POST
+DELETE
+
+/pedidos/{id}
+GET
+PUT
+
+/pedidos/current/?date,status,amount,
+
