@@ -1,5 +1,5 @@
 # delilah-resto
-Third and last project of the course Full Stack Web Development from Acamica platform.
+Under developing...
 
 ## Instalation
 1. You'll need [nodejs](https://nodejs.org). Check you  already have it installed in your system by typing in your terminal
