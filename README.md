@@ -2,7 +2,7 @@
 Third and last project of the course Full Stack Web Development from Acamica platform.
 
 ## Instalation
-1. You'll need [nodejs](https://nodejs.org). Check you have it already installed in your system by typing in your terminal
+1. You'll need [nodejs](https://nodejs.org). Check you  already have it installed in your system by typing in your terminal
 ```bash
 node --version
 ```
@@ -25,10 +25,10 @@ npm start
 
 
 
-# Procedure
+<!-- # Procedure
 In the folder [design](./design/reference_img/) you will find all the images that compound the project.
 
-Let's analyse one by one in order to identify the data structure and the differents API endpoints that we would have to use.
+Let's analyse one by one in order to identify the data structure and the differents API endpoints that we would have to use. -->
 
 <!-- ### Log in
 ![](./design/reference_img/01-login.png "Title")

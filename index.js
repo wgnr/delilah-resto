@@ -1,28 +1,38 @@
+// Build-in node.js libraries
+const path = require("path");
+
 // Server initialization
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000; // In case PORT is missing in env, 3000 will be used in replace.
 
-// Middleware Body parser
-app.use(express.json());
+// Start server
+app.listen(PORT, () => { console.log(`${new Date().toLocaleString()} -- Server is up and listening at port ${PORT}`) });
 
-// Welcoming server up
-app.listen(PORT, () => { log(`${new Date().toISOString} -- Server is listening at port ${PORT}`) });
+
+// Middlewares
+// Middleware - Body parser
+app.use(express.json());
+// Middleware - Console logger
+app.use(require(path.join(
+    __dirname, "middlewares", "logger.js")));
+
+
 
 // ROUTES
-app.post("/login");             // Authenticate
-app.get("/users");              // Returns all info of user + hist ranking consumend dishes.
-app.post("/users");             // Create a new user
-app.get("/users/:id");          // Returns all info of all users.
-app.put("/users/:id");          // Update user info
-app.post("/users/:id/orders");  // Create a new order for the user.
-app.get("/users/:id/orders/:id");  // Returns all info of all users.
-app.delete("/users/:id/orders/:id");  // Cancell order.
-app.get("/dishes");             // List all dishes
-app.post("/dishes");            // Create a plate
-app.put("/dishes");             // Modify the plate
-app.delete("/dishes");          // Delete a plate
-app.get("/orders", (req, res) => {  // List all orders
+app.post("/login");             // Authenticate PUBLIC
+app.get("/users");              // Returns all info of user ADM
+app.post("/users");             // Create a new user USER - COND 1,6
+app.get("/users/:id");          // Returns info user + hist ranking consumend dishes. USER - COND 6
+app.put("/users/:id");          // Update user info USER
+app.post("/users/:id/orders");  // Create a new order for the user USER - COND 3
+app.get("/orders/:id");  // Return the users' order USER
+app.put("/orders/:id");  // Update status of the order ADM - COND 4
+app.get("/dishes");             // List all dishes PUBLIC - COND 2
+app.post("/dishes");            // Create a plate ADM - COND 5,6
+app.put("/dishes");             // Modify the plate ADM - COND 5,6
+app.delete("/dishes");          // Delete a plate ADM - COND 5,6
+app.get("/orders", (req, res) => {  // List all orders ADM
     const { at, before, after } = req.query;
 });
 

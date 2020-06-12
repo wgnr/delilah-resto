@@ -1,0 +1,2 @@
+2020-06-11
+Define the remaining routes. assure CRUD for each entity.
