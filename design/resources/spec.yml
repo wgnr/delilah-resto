@@ -1,0 +1,346 @@
+openapi: 3.0.0
+# Cabecera del documento.
+info:
+  title: Delilah 
+  description: Crea una landing page para un evento de tecnología. Los visitantes deben tener la posibilidad de inscribirse, no puede haber emails repetidos y no son aceptados los emails @hotmail.com, @gmail.com y @yahoo.com. El desarrollo debe contar con una sección de administración privada que le permita ver al organizador quienes están registrados en su evento. 
+  version: 1.0.0
+# Fin cabecera del documento.
+
+# Instancias de servidores disponibles para los paths.
+servers:
+- url: /v1
+# Fin Instancias.
+
+# Paths, listado de paths que vamos a definir para nuestra api.
+paths:
+  /login:
+    get:
+      summary: Get token.
+      description: Pass as query arguments username and password.
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+            example: queen_freddie
+          required: true
+        - in: query
+          name: password
+          schema:
+            type: string
+            format: password
+            example: my_personal_password
+          required: true
+      responses:
+        200:
+          description: OK
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        401:
+          description: Username or password are wrong.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 401 - Invalid username or password
+  /users:
+    post:
+      summary: Create new user
+      description: Create a new user passing in its body the corresponding object.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_new'
+      responses:
+        201:
+          description: Created
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_full'
+        400:
+          description: Some properties may be missing or are already in db.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 400 - Incorrect information given
+
+  /users/{id}/dishes:
+    get:
+      summary: Get user's favourite dishes.
+      description: Returns all plates requested by user ordered by consume quantity.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 512
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - type: object
+                      properties:
+                        dish:
+                          $ref: '#/components/schemas/dish'
+                    - type: object  
+                      properties:
+                        quantity:
+                          type: number
+                          example: 20
+                          description: Number of times the user's requested dish.
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /dishes:
+    get:
+      summary: Get all available dishes.
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/dish'
+
+      
+  # /metadata:
+  #   get:
+  #     summary: Devuleve informacion del evento.
+  #     description: Devuelve toda la informacion general del evento, como su nombre, titulo, etc.
+  #     responses:
+  #       200:
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/metadata"
+                
+  # /registrados:
+  #   get:
+  #     summary: Devuelve la lista de los asistentes registrados.
+  #     description: Devuelve todos los asistentes al evento. Sólo si se valida el token.
+  #     responses:
+  #       200:
+  #         description: Faltan datos.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/inscripcion'
+  #       403:
+  #         description: Faltan datos.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/singlemessage"
+  #   post:
+  #     summary: Crea un nuevo asistente.
+  #     description: Crea un nuevo registro en el listado de asistentes.
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/inscripcion"
+  #     responses:
+  #       200:
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/inscripcion"
+  #       403:
+  #         description: Faltan datos...
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/singlemessage"
+  # /acceso: # 2do Endpoint
+  #   get:
+  #     summary: Registra el admin para ver su info
+  #     description: Devuelve un token para poder acceder al panel de control. Dentro del message estará la respuesa.
+  #     parameters: 
+  #       - in: path
+  #         name: user
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: admin
+  #       - in: path
+  #         name: password
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: 123cigarrillo43
+  #     responses:
+  #       200:
+  #         description: OK
+  #         content: 
+  #           application/json:
+  #             schema:
+  #               "$ref": "#/components/schemas/singlemessage"
+  #       400:
+  #         description: No se concedió acceso.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/newuser"
+
+components:
+  schemas:
+    token:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE1MTYyMzkwMjJ9.C7eecdX_pumR-P1Kv3q3fkp27Jtian0VJKy4XpStmt8
+    user:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: Freddie Mercury
+        username:
+          type: string
+          example: queen_freddie
+        email:
+          type: string
+          example: freddiemercury@gmail.com
+        phone:
+          type: string
+          example: +447712345678
+        address:
+          type: string
+          example: Maipu 999
+    user_new:
+      allOf:
+        - $ref: "#/components/schemas/user"
+        - type: object
+          properties:
+            password:       # Password is required
+              type: string
+              example: my_personal_password
+    user_full:
+      allOf:
+        - type: object
+          properties:
+            id:             # id num is added
+              type: number
+              example: 5487
+        - $ref: "#/components/schemas/user"
+        - $ref: "#/components/schemas/token"
+    dish:
+        type: object
+        properties:
+          id:
+            type: number
+            example: 666
+          name:
+            type: string
+            example: Hamburguesa Clásica
+          name_short:
+            type: string
+            example: HamClas
+          price:
+            type: number
+            example: 350
+          img_path:
+            type: string
+            example: ./src/img/ham-clas.png
+          is_available:
+            type: boolean
+            example: true
+    charla:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 01
+        hora:
+          type: string # https://tools.ietf.org/html/rfc3339#section-5.6 NO SE CHE NO SALIO.
+          format: date-time
+          example: "2020-05-26T20:14:11.219Z"
+  
+        expositor:
+          type: string
+          example: Ángel David Revilla
+        empresa:
+          type: string
+          example: YouTube Inc.
+    metadata:
+      type: object
+      properties:
+        titulo:
+          type: string
+          example: Nombre del título del evento de tecnologia!
+        subtitulo:
+          type: string
+          example: Subtitulo del evento!
+        fecha:
+          type: string
+          format: date
+          example: "2020-05-26"
+        personasRegistradas:
+          type: number
+          description: Este valor es calculado dinamicamente.
+          example: 250
+        cantidadSpeakers:
+          type: number
+          description: Este valor es calculado dinamicamente.
+          example: 40
+    inscripcion:
+      type: object
+      properties:
+        numeroAsistente:
+          type: integer
+          example: 200
+        nombre:
+          type: string
+          example: Juan
+        apellido:
+          type: string
+          example: Wagner
+        correo:
+          type: string
+          example: juan.wagner@co2.com
+        edad:
+          type: integer
+          example: 65
+        comentario:
+          type: string
+          example: Soy alérgico a las cadenas de carbono.
+    singlemessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Respuesta...
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid       
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+          
+
+# security:   # 2) Apply the security globally to all operations
+#   - bearerAuth: []         # use the same name as above

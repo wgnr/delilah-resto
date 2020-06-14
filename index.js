@@ -28,7 +28,7 @@ const path_routes_v1 = path.join(__dirname, "routes", "api", "v1");
 app.use(url_routes_v1 + "dishes",
     require(path.join(path_routes_v1, "dishes.js")));
 
-// Login routes
+// Log-in routes
 app.use(url_routes_v1 + "login",
     require(path.join(path_routes_v1, "login.js")));
 

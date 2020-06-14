@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
     const { at, before, after } = req.query;
 });
 
-// Return the users' order USER
+// Return order status USER
 router.get("/:id", (req, res) => { });   
 
 // Update status of the order ADM - COND 4

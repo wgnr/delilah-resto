@@ -1,72 +1,50 @@
-POV: Soy un restaurant, y tengo platos, clientes y sus pedidos.
+Descripcion de rutas utilizadas:
 
-GET / POST / PUT / DELETE
+BASICOS:
 
-/authentication?username=USERNAME&password=PASSWORD
+DE IMAGEN 01-login
+GET /login?username=USERNAME&password=PASSWORD
+    OK  Devuelvo {token: ID_USER}
 
-/clients
-GET: Trae todos mis clientes.
-POST: Crea un nuevo cliente. En su body un JSON con toda la datita.
-DELETE: Borra bulk clientes.
-
-/clientes/{id}
-GET: Trae info del cliente.
-PUT: Actualiza los datos del cliente.
-DELETE: Borra al cliente.
-
-/platos
-GET: Trae todos los platos
-POST: Crea un nuevo plato
-DELETE: Borra todos los platos
-
-/platos/{id}
-GET: Trae info del plato
-PUT: Actualiza el plato.
-DELETE: borra el plato.
-
-
-TENGO UN SERVICIO ORIENTADO EN LOS PEDIDOS!
-/pedidos
-GET
-POST
-DELETE
-
-/pedidos/{id}
-GET
-PUT
-
-/pedidos/current/?date,status,amount,
-
-
-POV: soy un punto de acceso y dependiendo de quien acceda permito hacer determinadas cosas.
-
-HICE UN CRUD DE TODOS LAS ENTIDADES?
-
-
-POST /login
-    OK  devuelvo el token
-    F   mensaje de error
-
-GET /users/:id
-    ok  devuleve la info basica del usuario + listado de platos favoritos
-PUT /users/:id
-    ok  actualiza datos del cliente
-GET /users
-    ok  me trae a todos los lcientes
-post /users
+DE IMAGEN 02-sign-up
+POST /users                     CL-1
     OK  usuario creado redirecciona a la pagina de login
     F   mensaje de error, ej usuario duplicado o correo existente.informar
 
-GET /dishes
+DE IMAGEN 03-explorador
+GET /dishes                     CL-2
     OK  Lista todos los productos del local
+GET /users/{id}/dishes
+    OK Devulve un listado de los platos mas solicitados por el cliente.
 
-POST /orders
-    OK  crea el pedido. devolver numero de pedido
+DE IMAGEN 05-carrito
+POST /orders                    CL-3
+    OK  Crea el pedido. devolver numero de pedido
+
+DE IMAGEN 06-éxito Y 06-historial 
 GET /orders/:id
-    ok  info del pedido
-DELETE /orders/:id
-    ok  ME CANCELA EL PEDIDO
-GET /orders?at="dia"&before="dia"&after="dia"
+    ok  Info del pedido completa.
+
+DE IMAGEN 07-admin
+POST /dishes                    CL-5
+    ok crea un nuevo plato.
+GET /orders?at="dia"&before="dia"&after="dia"       PARA EL HISTORIAL Y PARA PEDIDOS!
     ok  array de todos los orders
     si no tiene nada. del día
     si tiene atalguno hace el or de la busqueda... and de before y after y or de array.
+PUT /orders/:id?state=state_val CL-4
+    ok actualiza el estado de la orden.
+
+CRUD DISHES:                    CL-5    CL-6
+GET /dishes/:id
+PUT /dishes/:id
+DELETE /dishes/:id
+
+CRUD USERS:                     CL-6
+GET /users
+GET /users/:id
+    ok  devuleve la info basica del usuario
+PUT /users/:id
+    ok  actualiza datos del cliente
+DELETE /users/:id
+    ok  devuleve la info basica del usuario
