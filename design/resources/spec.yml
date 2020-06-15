@@ -1,17 +1,15 @@
 openapi: 3.0.0
-# Cabecera del documento.
+# Document header
 info:
-  title: Delilah 
-  description: Crea una landing page para un evento de tecnología. Los visitantes deben tener la posibilidad de inscribirse, no puede haber emails repetidos y no son aceptados los emails @hotmail.com, @gmail.com y @yahoo.com. El desarrollo debe contar con una sección de administración privada que le permita ver al organizador quienes están registrados en su evento. 
+  title: delilah-resto
+  description: API interfase for provingin information to front-end.
   version: 1.0.0
-# Fin cabecera del documento.
-
-# Instancias de servidores disponibles para los paths.
+  
+# Available server instances for paths
 servers:
 - url: /v1
-# Fin Instancias.
 
-# Paths, listado de paths que vamos a definir para nuestra api.
+# Path routes
 paths:
   /login:
     get:
@@ -39,15 +37,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/token'
         401:
-          description: Username or password are wrong.
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: 401 - Invalid username or password
+          description: Invalid username or password
   /users:
+    get:
+      summary: Returns all users
+      security: 
+        - bearerAuth: []
+      responses:
+        201:
+          description: Created
+          content:    
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'    
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
     post:
-      summary: Create new user
+      summary: Create a new user
       description: Create a new user passing in its body the corresponding object.
       requestBody:
         required: true
@@ -61,15 +69,78 @@ paths:
           content:    
             application/json:
               schema:
-                $ref: '#/components/schemas/user_full'
+                $ref: '#/components/schemas/user'
         400:
-          description: Some properties may be missing or are already in db.
-          content:
-            text/plain:
+          description: Incorrect information given
+  /users/{id}:
+    get:
+      summary: Get user's information.
+      description: Admin will be able to fetch any info. User only can view its own.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 512
+      responses:
+        200:
+          description: Ok
+          content:    
+            application/json:
               schema:
-                type: string
-                example: 400 - Incorrect information given
-
+                $ref: '#/components/schemas/user'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: Update user's information.
+      description: Admin will be able to change any info. User only can edit its own.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 512
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_new'
+      responses:
+        200:
+          description: Ok
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_min'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: Delete user.
+      description: Admin will be able to delete any user. User is not allowed.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 512
+      responses:
+        204:
+          description: User was deleted.
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
   /users/{id}/dishes:
     get:
       summary: Get user's favourite dishes.
@@ -92,22 +163,14 @@ paths:
               schema:
                 type: array
                 items:
-                  allOf:
-                    - type: object
-                      properties:
-                        dish:
-                          $ref: '#/components/schemas/dish'
-                    - type: object  
-                      properties:
-                        quantity:
-                          type: number
-                          example: 20
-                          description: Number of times the user's requested dish.
+                  $ref: '#/components/schemas/dish_accum'
         401:
           $ref: '#/components/responses/UnauthorizedError'
   /dishes:
     get:
       summary: Get all available dishes.
+      security: 
+        - bearerAuth: []
       responses:
         200:
           description: Ok
@@ -117,92 +180,205 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/dish'
-
-      
-  # /metadata:
-  #   get:
-  #     summary: Devuleve informacion del evento.
-  #     description: Devuelve toda la informacion general del evento, como su nombre, titulo, etc.
-  #     responses:
-  #       200:
-  #         description: OK
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/metadata"
-                
-  # /registrados:
-  #   get:
-  #     summary: Devuelve la lista de los asistentes registrados.
-  #     description: Devuelve todos los asistentes al evento. Sólo si se valida el token.
-  #     responses:
-  #       200:
-  #         description: Faltan datos.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/inscripcion'
-  #       403:
-  #         description: Faltan datos.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/singlemessage"
-  #   post:
-  #     summary: Crea un nuevo asistente.
-  #     description: Crea un nuevo registro en el listado de asistentes.
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: "#/components/schemas/inscripcion"
-  #     responses:
-  #       200:
-  #         description: OK
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/inscripcion"
-  #       403:
-  #         description: Faltan datos...
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/singlemessage"
-  # /acceso: # 2do Endpoint
-  #   get:
-  #     summary: Registra el admin para ver su info
-  #     description: Devuelve un token para poder acceder al panel de control. Dentro del message estará la respuesa.
-  #     parameters: 
-  #       - in: path
-  #         name: user
-  #         required: true
-  #         schema:
-  #           type: string
-  #           example: admin
-  #       - in: path
-  #         name: password
-  #         required: true
-  #         schema:
-  #           type: string
-  #           example: 123cigarrillo43
-  #     responses:
-  #       200:
-  #         description: OK
-  #         content: 
-  #           application/json:
-  #             schema:
-  #               "$ref": "#/components/schemas/singlemessage"
-  #       400:
-  #         description: No se concedió acceso.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/newuser"
-
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Create a new dish
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dish_min'
+      responses:
+        201:
+          description: Dish was created!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dish'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /dishes/{id}:
+    get:
+      summary: Get dish.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Dish's ID
+          required: true
+          schema:
+            type: integer
+            example: 666
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dish'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: Modify dish's information.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Dish's ID
+          required: true
+          schema:
+            type: integer
+            example: 666
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dish_min'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dish'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: Delete dish.
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Dish's ID
+          required: true
+          schema:
+            type: integer
+            example: 666
+      responses:
+        204:
+          description: Dish was deleted.
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /orders:
+    get:
+      summary: Returns all orders depending on params.
+      description: If no param if specified, orders from current day will be fetched. Before and after filters together and "at" add the date to the filter result.
+      parameters:
+        - in: query
+          name: at
+          description: Filter orders based on exact ISO date.
+          example: "2020-06-15"
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: before
+          description: Filter orders before or equal ISO date.
+          example: "2020-04-15"
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: after
+          description: Filter orders after or equal ISO date.
+          example: "2020-01-01"
+          required: false
+          schema:
+            type: string
+            format: date
+      security: 
+        - bearerAuth: []
+      responses:
+        201:
+          description: Array of orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/order'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Create a new order for the user.
+      description: User's ID will be found inside token, so it's not necessary.
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_new'
+      responses:
+        201:
+          description: Created
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /orders/{id}:
+    get:
+      summary: Get order info
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Order ID
+          required: true
+          schema:
+            type: integer
+            example: 36
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: Update order status
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Order ID
+          required: true
+          schema:
+            type: integer
+            example: 36
+        - in: query
+          name: state
+          description: New state of the order
+          example: 2
+          required: true
+          schema:
+            type: number
+      responses:
+        201:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
 components:
   schemas:
     token:
@@ -211,7 +387,7 @@ components:
         token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE1MTYyMzkwMjJ9.C7eecdX_pumR-P1Kv3q3fkp27Jtian0VJKy4XpStmt8
-    user:
+    user_min:
       type: object
       properties:
         full_name:
@@ -228,110 +404,140 @@ components:
           example: +447712345678
         address:
           type: string
-          example: Maipu 999
+          example: Maipu 999 1º A
     user_new:
       allOf:
-        - $ref: "#/components/schemas/user"
+        - $ref: "#/components/schemas/user_min"
         - type: object
           properties:
             password:       # Password is required
               type: string
               example: my_personal_password
-    user_full:
+    user:
       allOf:
         - type: object
           properties:
             id:             # id num is added
               type: number
               example: 5487
-        - $ref: "#/components/schemas/user"
-        - $ref: "#/components/schemas/token"
-    dish:
-        type: object
-        properties:
-          id:
-            type: number
-            example: 666
-          name:
-            type: string
-            example: Hamburguesa Clásica
-          name_short:
-            type: string
-            example: HamClas
-          price:
-            type: number
-            example: 350
-          img_path:
-            type: string
-            example: ./src/img/ham-clas.png
-          is_available:
-            type: boolean
-            example: true
-    charla:
+        - $ref: '#/components/schemas/user_min'
+    dish_new:
       type: object
       properties:
         id:
+          type: number
+          example: 15
+        quantity:
+          type: number
+          example: 3
+    dish_min:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Hamburguesa Clásica
+        name_short:
+          type: string
+          example: HamClas
+        price:
+          type: number
+          example: 350
+        img_path:
+          type: string
+          example: ./src/img/ham-clas.png
+        is_available:
+          type: boolean
+          example: true     
+    dish:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: number
+              example: 666
+        - $ref: "#/components/schemas/dish_min"
+    dish_accum:
+      allOf:
+        - type: object
+          properties:
+            dish:
+              $ref: '#/components/schemas/dish'
+        - type: object  
+          properties:
+            accumulated:
+              type: number
+              example: 20
+              description: Number of times the user's requested dish.
+    ordered_dishes:
+      type: array
+      items:
+        allOf:
+          - type: object
+            properties:
+              dish:
+                $ref: '#/components/schemas/dish'
+          - type: object  
+            properties:
+              ordered:
+                type: number
+                example: 3
+                description: Number of dish ordered
+    order_new:
+      type: object
+      properties:
+        dishes:
+          type: array
+          items:
+            $ref: "#/components/schemas/dish_new"
+        payment_type:
+          type: number
+          example: 2
+        address:
+          type: string
+          example: Montevideo 1212 1B
+    order:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 5412
+        number:
           type: integer
-          example: 01
-        hora:
-          type: string # https://tools.ietf.org/html/rfc3339#section-5.6 NO SE CHE NO SALIO.
+          example: 500
+        address:
+          type: string
+          example: Montevideo 1212 1B
+        timestamp:
+          type: string
           format: date-time
-          example: "2020-05-26T20:14:11.219Z"
-  
-        expositor:
+        description:
           type: string
-          example: Ángel David Revilla
-        empresa:
-          type: string
-          example: YouTube Inc.
-    metadata:
-      type: object
-      properties:
-        titulo:
-          type: string
-          example: Nombre del título del evento de tecnologia!
-        subtitulo:
-          type: string
-          example: Subtitulo del evento!
-        fecha:
-          type: string
-          format: date
-          example: "2020-05-26"
-        personasRegistradas:
-          type: number
-          description: Este valor es calculado dinamicamente.
-          example: 250
-        cantidadSpeakers:
-          type: number
-          description: Este valor es calculado dinamicamente.
-          example: 40
-    inscripcion:
-      type: object
-      properties:
-        numeroAsistente:
-          type: integer
-          example: 200
-        nombre:
-          type: string
-          example: Juan
-        apellido:
-          type: string
-          example: Wagner
-        correo:
-          type: string
-          example: juan.wagner@co2.com
-        edad:
-          type: integer
-          example: 65
-        comentario:
-          type: string
-          example: Soy alérgico a las cadenas de carbono.
-    singlemessage:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Respuesta...
+          example: 1xHamClas 1xSandVegg
+        status:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+                example: En Preparaciòn
+              timestamp:
+                type: string
+                format: date-time
+        user:
+          $ref: "#/components/schemas/user"
+        payment:
+          type: object
+          properties:
+            type:
+              type: number
+              example: 2
+            total:
+              type: number
+              example: 650
+        dishes:
+          $ref: "#/components/schemas/ordered_dishes"
+
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid       
@@ -340,7 +546,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT    # optional, arbitrary value for documentation purposes
-          
-
-# security:   # 2) Apply the security globally to all operations
-#   - bearerAuth: []         # use the same name as above
