@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000; // In case PORT is missing in env, 3000 w
 
 // Start server
 app.listen(PORT, () => { 
-    console.log(`${new Date().toLocaleString()} -- Server is up and listening at port ${PORT}`) });
+    console.log(`${new Date().toLocaleString()} -- Server is up and listening to port ${PORT}`) });
 
 
 

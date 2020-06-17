@@ -422,6 +422,11 @@ components:
               type: number
               example: 5487
         - $ref: '#/components/schemas/user_min'
+        - type: object
+          properties:
+            id_security_type: # Admin / User
+              type: number
+              example: 1
     dish_new:
       type: object
       properties:

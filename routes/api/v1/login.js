@@ -21,15 +21,15 @@ router.get("/", (req, res) => {
     if (!username || !password) return res.sendStatus(401);
 
     // Validate provided information
-    const { id } = db.Users.find(user => user.username === username && user.password === password);
+    const { id, id_security_type } = db.Users.find(user => user.username === username && user.password === password);
 
-    // Check wether id was found
+    // Check whether id was found
     if (!id) return res.sendStatus(401);
 
     // Generate token
-    const token = jwt.sign({ id }, db.passphrase);
+    const token = jwt.sign({ id, id_security_type }, db.passphrase);
 
-    return res.status(200).json({token});
+    return res.status(200).json({ token });
 });
 
 module.exports = router;
