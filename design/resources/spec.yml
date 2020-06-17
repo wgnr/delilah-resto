@@ -41,6 +41,7 @@ paths:
   /users:
     get:
       summary: Returns all users
+      description: Only admin can query.
       security: 
         - bearerAuth: []
       responses:
@@ -439,6 +440,9 @@ components:
         name_short:
           type: string
           example: HamClas
+        description:
+          type: string
+          example: Hamburguesa 200g de carne, con lechuga y tomate.
         price:
           type: number
           example: 350
@@ -482,6 +486,14 @@ components:
                 type: number
                 example: 3
                 description: Number of dish ordered
+              purchased_price:
+                type: number
+                example: 250
+                description: Price in which the dish was purchased
+              subtotal:
+                type: number
+                example: 750
+                description: Subtotal purchased.
     order_new:
       type: object
       properties:
@@ -507,7 +519,10 @@ components:
         address:
           type: string
           example: Montevideo 1212 1B
-        timestamp:
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
           type: string
           format: date-time
         description:
