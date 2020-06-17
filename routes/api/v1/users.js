@@ -1,6 +1,16 @@
+/*
+    This file holds all routes belonging to /users.
+*/
+
 const express = require("express");
 const router = express.Router();
 
+// JWT Authentication
+const jwt = require("jsonwebtoken");
+
+// Connect 2 db.
+const path = require("path");
+const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
 
 // Returns all info of user ADM
 router.get("/", (req, res) => { });
