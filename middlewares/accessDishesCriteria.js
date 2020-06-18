@@ -5,7 +5,7 @@
     
     Store ID param in res.locals.param_id
 */
-const accessUserCriteria = (req, res, next) => {
+const accessDishesCriteria = (req, res, next) => {
     // Take id from request's parameter
     let { id } = req.params;
 
@@ -25,4 +25,4 @@ const accessUserCriteria = (req, res, next) => {
 }
 
 
-module.exports = accessUserCriteria;
+module.exports = accessDishesCriteria;

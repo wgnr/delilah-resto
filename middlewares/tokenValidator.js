@@ -6,6 +6,15 @@ const jwt = require("jsonwebtoken");
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "db.js"));
 
+
+/*
+    Validates:
+    * Whether a token was provided
+    * Whether is valid
+    * Whether it's admin
+    
+    Store results in res.locals.user
+*/
 const tokenValidatior = (req, res, next) => {
     try {
         // Check whether Bearer authentication token exits in header

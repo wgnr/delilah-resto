@@ -4,7 +4,6 @@
 
 const path = require("path");
 const express = require("express");
-const { nextTick } = require("process");
 const router = express.Router();
 
 // Middlewares
@@ -35,7 +34,7 @@ router.post("/",
             val_phone: validate.phone(phone),
             val_address: validate.address(address),
             val_password: validate.password(password)
-        }
+        };
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
         // New user to be created
