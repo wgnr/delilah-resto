@@ -41,12 +41,5 @@ app.use(url_routes_v1 + "/orders",
 app.use(url_routes_v1 + "/users",
     require(path.join(path_routes_v1, "users.js")));
 
-
-// SQL
-/*
-Favourite plates will be the resulto of the following query
-SELECT SUM(od.cantidad)
-FROM Users as u INNER JOIN Orders as o ON u.id=o.id_user
-INNER JOIN Order_Details as od ON o.id=od.id_order
-WHERE u.id=1541231
-*/
+// Any other requested path would be responsed by 404
+app.use("*", (req, res)=>res.sendStatus(404));
