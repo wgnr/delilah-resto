@@ -123,7 +123,7 @@ router.put("/:id",
 );
 
 // Delete a plate ADM - COND 5,6
-router.delete("/",
+router.delete("/:id",
     tokenValidator,
     accessDishesCriteria,
     (req, res) => {

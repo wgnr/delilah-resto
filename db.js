@@ -41,6 +41,51 @@ const Dishes = [
     }
 ];
 
+const Orders =[
+    {
+      "id": 5412,
+      "number": 500,
+      "address": "Montevideo 1212 1B",
+      "created_at": "2020-06-18T21:11:34.536Z",
+      "updated_at": "2020-06-18T21:11:34.536Z",
+      "description": "1xHamClas 1xSandVegg",
+      "status": [
+        {
+          "status": "En Preparaciòn",
+          "timestamp": "2020-06-18T21:11:34.536Z"
+        }
+      ],
+      "user": {
+        "id": 5487,
+        "full_name": "Freddie Mercury",
+        "username": "queen_freddie",
+        "email": "freddiemercury@gmail.com",
+        "phone": 447712345678,
+        "address": "Maipu 999 1º A",
+        "id_security_type": 1
+      },
+      "payment": {
+        "type": 2,
+        "total": 650
+      },
+      "dishes": [
+        {
+          "dish": {
+            "id": 666,
+            "name": "Hamburguesa Clásica",
+            "name_short": "HamClas",
+            "description": "Hamburguesa 200g de carne, con lechuga y tomate.",
+            "price": 350,
+            "img_path": "./src/img/ham-clas.png",
+            "is_available": true
+          },
+          "ordered": 3,
+          "purchased_price": 250,
+          "subtotal": 750
+        }
+      ]
+    }
+  ];
 const passphrase = "kslasdkljj32kjek23jeljrewkljgkljvfklñjvkljgk4jtkñl34jkrj34ñlk5j34kl5ñklgvrlkgj34jtlk5gv4g54556gv4g65v34g56";
 
-module.exports = { Users, passphrase, Security_Types, Dishes };
+module.exports = { Users, passphrase, Security_Types, Dishes, Orders };
