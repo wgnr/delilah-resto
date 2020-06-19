@@ -1,8 +1,4 @@
-/*
-    Validates:
-    * Checking passing criteria
-*/
-const accessOrderCriteria = (req, res, next) => {
+const adminOnlyAccess = (req, res, next) => {
     /* Check pass criteria:
         1) Admin only.
     */
@@ -12,4 +8,4 @@ const accessOrderCriteria = (req, res, next) => {
 }
 
 
-module.exports = accessOrderCriteria;
+module.exports = adminOnlyAccess;
