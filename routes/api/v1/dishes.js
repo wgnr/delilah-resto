@@ -4,26 +4,46 @@
 
 const path = require("path");
 const express = require("express");
+const { nextTick } = require("process");
 const router = express.Router();
 
 // Middlewares
 const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const accessDishesCriteria = require(path.join(__dirname, "..", "..", "..", "middlewares", "accessDishesCriteria.js"));
+const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
 
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
 
-// List all dishes PUBLIC - COND 2
-router.get("/",
-    tokenValidator,
-    (req, res) => res.status(201).json(db.Dishes)
-);
+// Own validation rules
+const validate = {
+    name: name => {
+        if (!name) return "Empty name."
+        if (name.length < 2) return "name is too short...";
+    },
 
-// Create a plate ADM - COND 5,6
-router.post("/",
-    tokenValidator,
-    accessDishesCriteria,
-    (req, res) => {
+    name_short: name_short => {
+        if (!name_short) return "Empty name_short."
+        if (name_short.length === 0) return "short_name is too short...";
+    },
+
+    description: description => {
+        // if (!description) return "Empty description."
+    },
+
+    price: price => {
+        if (!price) return "Empty price."
+        if (!price > 0) return "Price should be number and higher than 0."
+    },
+
+    img_path: img_path => {
+        // if (!img_path) return "Empty img_path."
+    },
+
+    is_available: is_available => {
+        // if (!is_available) return "Empty is_available."
+    },
+
+    dish_post_body: (req, res, next) => {
         const { name, name_short, description, img_path } = req.body;
         let { price, is_available } = req.body;
 
@@ -44,25 +64,17 @@ router.post("/",
         };
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
-        // New Dish
-        const new_dish = {
-            id: Math.round(Math.random() * 1000),
-            name, name_short, description, price, img_path, is_available
-        }
 
-        // Store it in db
-        db.Dishes.push(new_dish);
+        res.locals.new_dish = { name, name_short, description, img_path, price, is_available };
+        return next();
+    },
 
-        return res.status(201).json(new_dish);
-    }
-);
-
-// List all dishes PUBLIC - COND 2
-router.get("/:id",
-    tokenValidator,
-    (req, res) => {
+    dish_id_param: (req, res, next) => {
         // Get id from request's parameter
-        const { id } = req.params;
+        let { id } = req.params;
+        id = +id;
+
+        if (isNaN(id)) return res.status(401).send("Dish ID should be numeric.");
 
         // Search id in db
         const dish = db.Dishes.find(dish => dish.id === +id);
@@ -70,24 +82,11 @@ router.get("/:id",
         // If dish doesn't exist, return
         if (!dish) return res.status(404).send("Dish not found");
 
-        return res.status(200).json(dish);
-    }
-);
+        res.locals.dish = dish;
+        return next();
+    },
 
-// Modify the plate ADM - COND 5,6
-router.put("/:id",
-    tokenValidator,
-    accessDishesCriteria,
-    (req, res) => {
-        // Get id from request's parameter
-        const { id } = req.params;
-
-        // Search id in db
-        const dish = db.Dishes.find(dish => dish.id === +id);
-
-        // If dish doesn't exist, return
-        if (!dish) return res.status(404).send("Dish not found");
-
+    dish_content_query: (req, res, next) => {
         // Get fields from body
         const { name, name_short, description, img_path } = req.body;
         let { price, is_available } = req.body;
@@ -109,14 +108,62 @@ router.put("/:id",
         };
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
+        res.locals.dish_information = { name, name_short, description, img_path, price, is_available };
+        return next();
+    }
+};
+
+// List all dishes PUBLIC - COND 2
+router.get("/",
+    tokenValidator,
+    (req, res) => res.status(201).json(db.Dishes)
+);
+
+// Create a plate ADM - COND 5,6
+router.post("/",
+    tokenValidator,
+    adminOnlyAccess,
+    validate.dish_post_body,
+    (req, res) => {
+        const new_dish = {
+            id: Math.round(Math.random() * 1000),
+            ...res.locals.new_dish
+        };
+
+        // Store it in db
+        db.Dishes.push(new_dish);
+
+        return res.status(201).json(new_dish);
+    }
+);
+
+// List all dishes PUBLIC - COND 2
+router.get("/:id",
+    tokenValidator,
+    validate.dish_id_param,
+    (req, res) => {
+        const dish = res.locals.dish;
+        return res.status(200).json(dish);
+    }
+);
+
+// Modify the plate ADM - COND 5,6
+router.put("/:id",
+    tokenValidator,
+    adminOnlyAccess,
+    validate.dish_id_param,
+    validate.dish_content_query,
+    (req, res) => {
+        const dish = res.locals.dish;
+        const dish_inf = res.locals.dish_information;
 
         // Update info, skip what wasn't included in body.
-        if (name) dish.name = name;
-        if (name_short) dish.name_short = name_short;
-        if (description) dish.description = description;
-        if (price) dish.price = price;
-        if (img_path) dish.img_path = img_path;
-        if (is_available) dish.is_available = is_available;
+        if (dish_inf.name) dish.name = dish_inf.name;
+        if (dish_inf.name_short) dish.name_short = dish_inf.name_short;
+        if (dish_inf.description) dish.description = dish_inf.description;
+        if (dish_inf.price) dish.price = dish_inf.price;
+        if (dish_inf.img_path) dish.img_path = dish_inf.img_path;
+        if (dish_inf.is_available) dish.is_available = dish_inf.is_available;
 
         return res.status(200).json(dish);
     }
@@ -125,16 +172,10 @@ router.put("/:id",
 // Delete a plate ADM - COND 5,6
 router.delete("/:id",
     tokenValidator,
-    accessDishesCriteria,
+    adminOnlyAccess,
+    validate.dish_id_param,
     (req, res) => {
-        // Get id from request's parameter
-        const { id } = req.params;
-
-        // Search id in db
-        const dish = db.Dishes.find(dish => dish.id === +id);
-
-        // If dish doesn't exist, return
-        if (!dish) return res.status(404).send("Dish not found");
+        const dish = res.locals.dish;
 
         // Delete dish
         return res.sendStatus(204);
@@ -142,28 +183,3 @@ router.delete("/:id",
 );
 
 module.exports = router;
-
-
-const validate = {
-    name: name => {
-        if (!name) return "Empty name."
-        if (name.length < 2) return "name is too short...";
-    },
-    name_short: name_short => {
-        if (!name_short) return "Empty name_short."
-        if (name_short.length === 0) return "short_name is too short...";
-    },
-    description: description => {
-        // if (!description) return "Empty description."
-    },
-    price: price => {
-        if (!price) return "Empty price."
-        if (!price > 0) return "Price should be number and higher than 0."
-    },
-    img_path: img_path => {
-        // if (!img_path) return "Empty img_path."
-    },
-    is_available: is_available => {
-        // if (!is_available) return "Empty is_available."
-    }
-};
