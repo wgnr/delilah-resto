@@ -53,7 +53,7 @@ const validate = {
         if (!+id_security_type > 0) return "id_security_type invalid number."
     },
 
-    dish_post_body: (req, res, next) => {
+    user_post_body: (req, res, next) => {
         const { full_name, username, email, phone, address, password } = req.body;
 
         // Validate data
@@ -72,57 +72,37 @@ const validate = {
     },
 
     user_id_param: (req, res, next) => {
+        // Take id from request's parameter
+        let { id } = req.params;
 
+        // Convert string to number
+        id = +id;
+        if (isNaN(id)) return res.status(401).send("Invalid user ID number.");
 
-        const user = db.Users.find(user => user.id === res.locals.param_id) || {};
-
-
+        // Store param in locas
         res.locals.param_id = id;
         return next();
-    }
-}
+    },
 
-// Returns all info of user ADM
-router.get("/",
-    tokenValidator,
-    (req, res) => {
-        if (!res.locals.user.is_admin) return res.sendStatus(401);
-        return res.status(201).json(db.Users);
-    });
+    own_user_data: (req, res, next) => {
+        // If it's admin go on.
+        if (res.locals.user.is_admin) return next();
 
-// Create a new user USER - COND 1,6
-router.post("/",
-    validate.dish_post_body,
-    (req, res) => {
-        // New user to be created
-        const new_user = {
-            id: Math.round(Math.random() * 1000),
-            ...res.locals.new_user,
-            id_security_type: 2 // By default asign it a user role
-        }
+        // Check whether order belongs to requester.
+        if (res.locals.user.id !== res.locals.param_id) return res.sendStatus(401);
 
-        db.Users.push(new_user);
-        return res.status(201).json(new_user);
-    });
-
-// Returns info user USER - COND 6 + it's favourite plates
-router.get("/:id",
-    tokenValidator,
-    accessUserCriteria,
-    validate.user_id_param,
-    (req, res) => {
-        const user = res.locals.user;
-        return res.status(200).json(user);
-    });
-
-// Update user info USER
-router.put("/:id",
-    tokenValidator,
-    accessUserCriteria,
-    (req, res) => {
+        return next();
+    },
+    searched_user: (req, res, next) => {
+        // Consulta SQL
         const user = db.Users.find(user => user.id === res.locals.param_id);
         if (!user) return res.status(404).send("The user was not found.");
 
+        res.locals.searched_user = user;
+        return next();
+    },
+
+    user_put_body: (req, res, next) => {
         const { full_name, username, email, phone, address, password, id_security_type } = req.body;
 
         // Validate data, skip what wasn't included in body.
@@ -138,14 +118,64 @@ router.put("/:id",
 
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
+        res.locals.updated_info = { full_name, username, email, phone, address, password, id_security_type };
+        return next();
+    }
+}
+
+// Returns all info of user ADM
+router.get("/",
+    tokenValidator,
+    (req, res) => {
+        if (!res.locals.user.is_admin) return res.sendStatus(401);
+        return res.status(201).json(db.Users);
+    });
+
+// Create a new user USER - COND 1,6
+router.post("/",
+    validate.user_post_body,
+    (req, res) => {
+        // New user to be created
+        const new_user = {
+            id: Math.round(Math.random() * 1000),
+            ...res.locals.new_user,
+            id_security_type: 2 // By default asign it a user role
+        }
+
+        db.Users.push(new_user);
+        return res.status(201).json(new_user);
+    });
+
+// Returns info user USER - COND 6 + it's favourite plates
+router.get("/:id",
+    tokenValidator,
+    validate.user_id_param,
+    validate.own_user_data,
+    validate.searched_user,
+    (req, res) => {
+        const user = res.locals.searched_user;
+        return res.status(200).json(user);
+    });
+
+// Update user info USER
+router.put("/:id",
+    tokenValidator,
+    adminOnlyAccess,
+    validate.user_id_param,
+    validate.searched_user,
+    validate.user_put_body,
+    (req, res) => {
+        const user = res.locals.searched_user;
+        const updated_info = res.locals.updated_info;
+
         // Update info, skip what wasn't included in body.
-        if (full_name) user.full_name = full_name;
-        if (username) user.username = username;
-        if (email) user.email = email;
-        if (password) user.password = password;
-        if (phone) user.phone = phone;
-        if (address) user.address = address;
-        if (res.locals.user.is_admin && id_security_type) user.id_security_type = id_security_type;
+        if (updated_info.full_name) user.full_name = updated_info.full_name;
+        if (updated_info.username) user.username = updated_info.username;
+        if (updated_info.email) user.email = updated_info.email;
+        if (updated_info.password) user.password = updated_info.password;
+        if (updated_info.phone) user.phone = updated_info.phone;
+        if (updated_info.address) user.address = updated_info.address;
+        if (res.locals.user.is_admin && updated_info.id_security_type) user.id_security_type = updated_info.id_security_type;
 
         return res.status(200).json(user);
     });
@@ -153,12 +183,11 @@ router.put("/:id",
 // Delete user
 router.delete("/:id",
     tokenValidator,
-    accessUserCriteria,
+    adminOnlyAccess,
+    validate.user_id_param,
+    validate.searched_user,
     (req, res) => {
-        if (!res.locals.user.is_admin) return res.status(401).send("Only admins can delete accounts.");
-
-        const user = db.Users.find(user => user.id === res.locals.param_id);
-        if (!user) return res.status(404).send("The user was not found.");
+        const user = res.locals.searched_user;
 
         // Delete action
 
@@ -168,8 +197,12 @@ router.delete("/:id",
 // Get user favourite dishes
 router.get("/:id/dishes",
     tokenValidator,
-    accessUserCriteria,
+    validate.user_id_param,
+    validate.own_user_data,
+    validate.searched_user,
     (req, res) => {
+        const user = res.locals.searched_user;
+        
         // Filter all dishes ordered by user 
         const sql_favourite_dishes_query = `SELECT dl.id AS id, name, dl.name_short AS name_short, 
         dl.description AS description, dl.price AS price, 
