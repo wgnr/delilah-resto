@@ -13,17 +13,47 @@ const accessUserCriteria = require(path.join(__dirname, "..", "..", "..", "middl
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
 
-// Returns all info of user ADM
-router.get("/",
-    tokenValidator,
-    (req, res) => {
-        if (!res.locals.user.is_admin) return res.sendStatus(401);
-        return res.status(201).json(db.Users);
-    });
+// Own validation rules
+const validate = {
+    full_name: full_name => {
+        if (!full_name) return "Empty full_name.";
+        if (full_name.length < 2) return "Full name is too short...";
+    },
 
-// Create a new user USER - COND 1,6
-router.post("/",
-    (req, res) => {
+    username: username => {
+        if (!username) return "Empty username.";
+        const checkUsername = db.Users.find(user => user.username === username);
+        if (checkUsername) return "Username already exists.";
+    },
+
+    email: email => {
+        if (!email) return "Empty email.";
+        const checkEmail = db.Users.find(user => user.email === email);
+        if (checkEmail) return "Email already exists.";
+    },
+
+    phone: phone => {
+        if (!phone) return "Empty phone.";
+        if (phone.length < 4) return "Phone is too short...";
+
+    },
+
+    address: address => {
+        if (!address) return "Empty address.";
+        if (address.length < 4) return "Address is too short...)";
+
+    },
+
+    password: password => {
+        if (!password) return "Empty password.";
+        if (password.length < 4) return "Password is too short...";
+    },
+
+    id_security_type: id_security_type => {
+        if (!+id_security_type > 0) return "id_security_type invalid number."
+    },
+
+    dish_post_body: (req, res, next) => {
         const { full_name, username, email, phone, address, password } = req.body;
 
         // Validate data
@@ -37,15 +67,41 @@ router.post("/",
         };
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
+        res.locals.new_user = { full_name, username, email, phone, address, password };
+        return next();
+    },
+
+    user_id_param: (req, res, next) => {
+
+
+        const user = db.Users.find(user => user.id === res.locals.param_id) || {};
+
+
+        res.locals.param_id = id;
+        return next();
+    }
+}
+
+// Returns all info of user ADM
+router.get("/",
+    tokenValidator,
+    (req, res) => {
+        if (!res.locals.user.is_admin) return res.sendStatus(401);
+        return res.status(201).json(db.Users);
+    });
+
+// Create a new user USER - COND 1,6
+router.post("/",
+    validate.dish_post_body,
+    (req, res) => {
         // New user to be created
         const new_user = {
             id: Math.round(Math.random() * 1000),
-            full_name, username, email, phone, address,
+            ...res.locals.new_user,
             id_security_type: 2 // By default asign it a user role
         }
 
-        db.Users.push({ ...new_user, password });
-
+        db.Users.push(new_user);
         return res.status(201).json(new_user);
     });
 
@@ -53,8 +109,9 @@ router.post("/",
 router.get("/:id",
     tokenValidator,
     accessUserCriteria,
+    validate.user_id_param,
     (req, res) => {
-        const user = db.Users.find(user => user.id === res.locals.param_id) || {};
+        const user = res.locals.user;
         return res.status(200).json(user);
     });
 
@@ -150,40 +207,3 @@ router.get("/:id/dishes",
 
 
 module.exports = router;
-
-// Data validation rules
-const validate = {
-    full_name: full_name => {
-        if (!full_name) return "Empty full_name.";
-        if (full_name.length < 2) return "Full name is too short...";
-    },
-    username: username => {
-        if (!username) return "Empty username.";
-        const checkUsername = db.Users.find(user => user.username === username);
-        if (checkUsername) return "Username already exists.";
-    }
-    ,
-    email: email => {
-        if (!email) return "Empty email.";
-        const checkEmail = db.Users.find(user => user.email === email);
-        if (checkEmail) return "Email already exists.";
-    }
-    ,
-    phone: phone => {
-        if (!phone) return "Empty phone.";
-        if (phone.length < 4) return "Phone is too short...";
-
-    },
-    address: address => {
-        if (!address) return "Empty address.";
-        if (address.length < 4) return "Address is too short...)";
-
-    },
-    password: password => {
-        if (!password) return "Empty password.";
-        if (password.length < 4) return "Password is too short...";
-    },
-    id_security_type: id_security_type => {
-        if (!+id_security_type > 0) return "id_security_type invalid number."
-    }
-}
