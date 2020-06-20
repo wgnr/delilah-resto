@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Middlewares
 const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const accessUserCriteria = require(path.join(__dirname, "..", "..", "..", "middlewares", "accessUserCriteria.js"));
+const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
 
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
