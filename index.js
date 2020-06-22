@@ -8,9 +8,17 @@ const app = express();
 const PORT = process.env.PORT || 3000; // In case PORT is missing in env, 3000 will be used in replace.
 
 // Start server
-app.listen(PORT, () => { 
-    console.log(`${new Date().toLocaleString()} -- Server is up and listening to port ${PORT}`) });
+app.listen(PORT, () => {
+    console.log(`${new Date().toLocaleString()} -- Server is up and listening to port ${PORT}`)
+});
 
+// DB connnection
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize("mysql://root:@127.0.0.1:3306/delilah-resto");
+
+sequelize.authenticate()
+    .then(response => console.log('Connection has been established successfully.', response))
+    .catch(error => console.error('Unable to connect to the database:', error));
 
 
 /* Middlewares */
@@ -42,4 +50,4 @@ app.use(url_routes_v1 + "/users",
     require(path.join(path_routes_v1, "users.js")));
 
 // Any other requested path would be responsed by 404
-app.use("*", (req, res)=>res.sendStatus(404));
+app.use("*", (req, res) => res.sendStatus(404));
