@@ -28,26 +28,8 @@ app.use(express.json());
 app.use(require(path.join(__dirname, "middlewares", "logger.js")));
 
 
-
-/* ROUTES */
-const url_routes_v1 = "/api/v1"; // Version 1
-const path_routes_v1 = path.join(__dirname, "routes", "api", "v1");
-
-// Dishes routes
-app.use(url_routes_v1 + "/dishes",
-    require(path.join(path_routes_v1, "dishes.js")));
-
-// Log-in routes
-app.use(url_routes_v1 + "/login",
-    require(path.join(path_routes_v1, "login.js")));
-
-// Orders routes
-app.use(url_routes_v1 + "/orders",
-    require(path.join(path_routes_v1, "orders.js")));
-
-// Users routes
-app.use(url_routes_v1 + "/users",
-    require(path.join(path_routes_v1, "users.js")));
-
+/* Routes */
+// Master route
+app.use(require(path.join(__dirname, "routes", "routes.js")));
 // Any other requested path would be responsed by 404
-app.use("*", (req, res) => res.sendStatus(404));
+app.all("*", (req, res) => res.sendStatus(404));
