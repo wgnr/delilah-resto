@@ -12,6 +12,7 @@ const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewa
 
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
+const { usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Own validation rules
 const validate = {
@@ -20,15 +21,15 @@ const validate = {
         if (full_name.length < 2) return "Full name is too short...";
     },
 
-    username: username => {
+    username: async username => {
         if (!username) return "Empty username.";
-        const checkUsername = db.Users.find(user => user.username === username);
+        const checkUsername = await usersDB.getUser.byUsername(username);
         if (checkUsername) return "Username already exists.";
     },
 
-    email: email => {
+    email: async email => {
         if (!email) return "Empty email.";
-        const checkEmail = db.Users.find(user => user.email === email);
+        const checkEmail = await usersDB.getUser.byEmail(email);
         if (checkEmail) return "Email already exists.";
     },
 
@@ -53,14 +54,14 @@ const validate = {
         if (!+id_security_type > 0) return "id_security_type invalid number."
     },
 
-    user_post_body: (req, res, next) => {
+    user_post_body: async (req, res, next) => {
         const { full_name, username, email, phone, address, password } = req.body;
 
         // Validate data
         const validations = {
             val_full_name: validate.full_name(full_name),
-            val_username: validate.username(username),
-            val_email: validate.email(email),
+            val_username: await validate.username(username),
+            val_email: await validate.email(email),
             val_phone: validate.phone(phone),
             val_address: validate.address(address),
             val_password: validate.password(password)
@@ -93,23 +94,23 @@ const validate = {
 
         return next();
     },
-    searched_user: (req, res, next) => {
+    searched_user: async (req, res, next) => {
         // Consulta SQL
-        const user = db.Users.find(user => user.id === res.locals.param_id);
+        const user = await usersDB.getUser.byId(res.locals.param_id);
         if (!user) return res.status(404).send("The user was not found.");
 
         res.locals.searched_user = user;
         return next();
     },
 
-    user_put_body: (req, res, next) => {
+    user_put_body: async (req, res, next) => {
         const { full_name, username, email, phone, address, password, id_security_type } = req.body;
 
         // Validate data, skip what wasn't included in body.
         const validations = {
             val_full_name: full_name && validate.full_name(full_name),
-            val_username: username && validate.username(username),
-            val_email: email && validate.email(email),
+            val_username: username && await validate.username(username),
+            val_email: email && await validate.email(email),
             val_phone: phone && validate.phone(phone),
             val_address: address && validate.address(address),
             val_password: password && validate.password(password),
@@ -126,24 +127,17 @@ const validate = {
 // Returns all info of user ADM
 router.get("/",
     tokenValidator,
-    (req, res) => {
+    adminOnlyAccess,
+    async (req, res) => {
         if (!res.locals.user.is_admin) return res.sendStatus(401);
-        return res.status(201).json(db.Users);
+        return res.status(201).json(await usersDB.getAllUsers());
     });
 
 // Create a new user USER - COND 1,6
 router.post("/",
     validate.user_post_body,
-    (req, res) => {
-        // New user to be created
-        const new_user = {
-            id: Math.round(Math.random() * 1000),
-            ...res.locals.new_user,
-            id_security_type: 2 // By default asign it a user role
-        }
-
-        db.Users.push(new_user);
-        return res.status(201).json(new_user);
+    async (req, res) => {
+        return res.status(201).json(await usersDB.createNewUser(res.locals.new_user));
     });
 
 // Returns info user USER - COND 6 + it's favourite plates
@@ -164,7 +158,7 @@ router.put("/:id",
     validate.user_id_param,
     validate.searched_user,
     validate.user_put_body,
-    (req, res) => {
+    async (req, res) => {
         const user = res.locals.searched_user;
         const updated_info = res.locals.updated_info;
 
@@ -177,7 +171,8 @@ router.put("/:id",
         if (updated_info.address) user.address = updated_info.address;
         if (res.locals.user.is_admin && updated_info.id_security_type) user.id_security_type = updated_info.id_security_type;
 
-        return res.status(200).json(user);
+        // return res.status(200).json(user);
+        return res.status(200).json(await usersDB.updateUser(user));
     });
 
 // Delete user
@@ -186,10 +181,11 @@ router.delete("/:id",
     adminOnlyAccess,
     validate.user_id_param,
     validate.searched_user,
-    (req, res) => {
+    async (req, res) => {
         const user = res.locals.searched_user;
 
         // Delete action
+        await usersDB.deleteUser(user);
 
         return res.sendStatus(204);
     });
@@ -200,11 +196,12 @@ router.get("/:id/dishes",
     validate.user_id_param,
     validate.own_user_data,
     validate.searched_user,
-    (req, res) => {
+    async (req, res) => {
         const user = res.locals.searched_user;
-        
+        return res.status(200).json(await usersDB.getFavDishes(user));
         // Filter all dishes ordered by user 
-        const sql_favourite_dishes_query = `SELECT dl.id AS id, name, dl.name_short AS name_short, 
+        const sql_favourite_dishes_query =
+            `SELECT dl.id AS id, name, dl.name_short AS name_short, 
         dl.description AS description, dl.price AS price, 
         dl.img_path AS img_path, dl.is_available AS is_available, 
         SUM(od.quantity) AS accumulated 
