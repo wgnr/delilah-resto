@@ -11,7 +11,8 @@ const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewar
 const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
 
 // Connect 2 db.
-const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
+const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
+
 
 // Own validation rules
 const validate = {
@@ -68,7 +69,7 @@ const validate = {
         return next();
     },
 
-    dish_id_param: (req, res, next) => {
+    dish_id_param: async (req, res, next) => {
         // Get id from request's parameter
         let { id } = req.params;
         id = +id;
@@ -76,7 +77,7 @@ const validate = {
         if (isNaN(id)) return res.status(401).send("Dish ID should be numeric.");
 
         // Search id in db
-        const dish = db.Dishes.find(dish => dish.id === +id);
+        const dish = await dishesDB.getDish(id);
 
         // If dish doesn't exist, return
         if (!dish) return res.status(404).send("Dish not found");
@@ -115,7 +116,7 @@ const validate = {
 // List all dishes PUBLIC - COND 2
 router.get("/",
     tokenValidator,
-    (req, res) => res.status(201).json(db.Dishes)
+    async (req, res) => res.status(201).json(await dishesDB.getAllDishes())
 );
 
 // Create a plate ADM - COND 5,6
@@ -123,16 +124,8 @@ router.post("/",
     tokenValidator,
     adminOnlyAccess,
     validate.dish_post_body,
-    (req, res) => {
-        const new_dish = {
-            id: Math.round(Math.random() * 1000),
-            ...res.locals.new_dish
-        };
-
-        // Store it in db
-        db.Dishes.push(new_dish);
-
-        return res.status(201).json(new_dish);
+    async (req, res) => {
+        return res.status(201).json(await dishesDB.createNewDish(res.locals.new_dish));
     }
 );
 
@@ -152,7 +145,7 @@ router.put("/:id",
     adminOnlyAccess,
     validate.dish_id_param,
     validate.dish_content_query,
-    (req, res) => {
+    async (req, res) => {
         const dish = res.locals.dish;
         const dish_inf = res.locals.dish_information;
 
@@ -164,7 +157,7 @@ router.put("/:id",
         if (dish_inf.img_path) dish.img_path = dish_inf.img_path;
         if (dish_inf.is_available) dish.is_available = dish_inf.is_available;
 
-        return res.status(200).json(dish);
+        return res.status(200).json(await dishesDB.updateDish(dish));
     }
 );
 
@@ -173,10 +166,11 @@ router.delete("/:id",
     tokenValidator,
     adminOnlyAccess,
     validate.dish_id_param,
-    (req, res) => {
+    async (req, res) => {
         const dish = res.locals.dish;
 
         // Delete dish
+        await dishesDB.deleteUser(dish);
         return res.sendStatus(204);
     }
 );

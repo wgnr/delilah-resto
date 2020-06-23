@@ -172,9 +172,9 @@ const db = {
                     type: sequelize.QueryTypes.SELECT,
                     replacements: { id }
                 });
-                
-            if (favDishesList.length===0) return [];
-            
+
+            if (favDishesList.length === 0) return [];
+
             const favDishes = favDishesList[0].map(d => {
                 return {
                     "dish": {
@@ -190,10 +190,82 @@ const db = {
                 }
             });
             console.log(favDishes);
-            
+
 
             return favDishes;
         }
+    },
+
+    dishesDB: {
+        getAllDishes: async () => {
+            const dishesList = await sequelize.query(
+                `SELECT id,name,name_short,description,price,img_path,is_available 
+                FROM dishes_list 
+                WHERE is_available=TRUE`,
+                {
+                    type: sequelize.QueryTypes.SELECT
+                });
+
+            return dishesList;
+        },
+
+        getDish: async (id) => {
+            const oneDish = await sequelize.query(
+                `SELECT id,name,name_short,description,price,img_path,is_available 
+                FROM dishes_list 
+                WHERE id=:id`,
+                {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { id }
+                });
+
+            if (oneDish.length !== 1) return;
+
+            return oneDish[0];
+        },
+
+        createNewDish: async (dish) => {
+            const { name, name_short, description, img_path, price, is_available } = dish;
+            const newDish = await sequelize.query(
+                `INSERT INTO dishes_list
+                (name, name_short, price, img_path, is_available, description) VALUES (:name,:name_short,:price,:img_path,:is_available,:description)`,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: { name, name_short, description, img_path, price, is_available }
+                });
+
+            const newID = newDish[0];
+            return await db.dishesDB.getDish(newID);
+        },
+
+        updateDish: async (dish) => {
+            const { id, name, name_short, description, img_path, price, is_available } = dish;
+
+            const updateDish = await sequelize.query(
+                `UPDATE dishes_list 
+                SET name=:name, name_short=:name_short, price=:price, img_path=:img_path, is_available=:is_available, description=:description
+                WHERE id=:id`,
+                {
+                    type: sequelize.QueryTypes.UPDATE,
+                    replacements: { id, name, name_short, description, img_path, price, is_available }
+                });
+
+                return await db.dishesDB.getDish(id);
+        },
+
+        deleteUser: async (dish) => {
+            const { id } = dish;
+
+            const deleteDish = await sequelize.query(
+                `DELETE FROM dishes_list 
+                WHERE id=:id`,
+                {
+                    type: sequelize.QueryTypes.DELETE,
+                    replacements: { id }
+                });
+
+            return;
+        },
     }
 }
 

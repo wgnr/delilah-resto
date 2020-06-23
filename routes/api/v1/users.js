@@ -11,7 +11,6 @@ const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewar
 const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
 
 // Connect 2 db.
-const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
 const { usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Own validation rules
