@@ -10,10 +10,10 @@ const jwt = require("jsonwebtoken");
 
 // Connect 2 db.
 const path = require("path");
-const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
+const { loginAuth, passphrase } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Get token containing user's ID
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     // Gets parameters from query
     const { username, password } = req.query;
 
@@ -21,13 +21,13 @@ router.get("/", (req, res) => {
     if (!username || !password) return res.sendStatus(401);
 
     // Validate provided information
-    const { id, id_security_type } = db.Users.find(user => user.username === username && user.password === password);
+    const { id, id_security_type } = await loginAuth(username, password);
 
     // Check whether id was found
-    if (!id) return res.sendStatus(401);
+    if (!id || !id_security_type) return res.sendStatus(401);
 
     // Generate token
-    const token = jwt.sign({ id, id_security_type }, db.passphrase);
+    const token = jwt.sign({ id, id_security_type }, passphrase);
 
     return res.status(200).json({ token });
 });
