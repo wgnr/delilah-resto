@@ -11,6 +11,7 @@ const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewa
 
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
+const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Own validation rules
 const validate = {
@@ -26,7 +27,9 @@ const validate = {
         if (isNaN(after)) return "Expected format date YYYY-MM-DD";
     },
 
-    dishes: dishes => {
+    dishes: async dishes => {
+        console.log("+++++++++++++Estoy en dishes!");
+
         if (!Array.isArray(dishes)) return "dishes should be an array!";
 
         if (dishes.length === 0) return "No dishes were ordered!";
@@ -41,9 +44,11 @@ const validate = {
 
         // Check whether dish exists
         let dish_id = undefined;
-        if (dishes.some(dish => {
-            dish_id = dish.id;
-            return !db.Dishes.find(dbDish => dbDish.id === +dish.id);
+        if (dishes.some(async dish => {
+            dish_id = +dish.id;
+            const d = await dishesDB.getDish(dish_id);
+            console.log(d);
+            return !d; // TODO tengo un error aca...
         })) return `The ordered dish id ${dish_id} doesn't exists.`
     },
 
@@ -76,20 +81,23 @@ const validate = {
         return next();
     },
 
-    order_post_body: (req, res, next) => {
+    order_post_body: async (req, res, next) => {
+        console.log("+++++++++++++Estoy en order_post_body!");
         const order = {};
         const { dishes, payment_type, address } = req.body;
         order.dishes = dishes;
         order.payment_type = +payment_type;
         order.address = address;
 
-
+        const a = await validate.dishes(order.dishes);
         // Validate data
         const validations = {
-            val_dishes: validate.dishes(order.dishes),
+            val_dishes: a,
             val_payment_type: validate.payment_type(order.payment_type),
             val_address: validate.address(order.address)
         };
+        console.log(validations);
+        
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
         res.locals.order = order;
@@ -161,6 +169,8 @@ router.post("/",
     tokenValidator,
     validate.order_post_body,
     (req, res) => {
+        console.log("+++++++++++++Estoy en la ultima parte!");
+        
         const order = res.locals.order;
         // ID who is trying to create a new order
         const toWhom = res.locals.user.id;
