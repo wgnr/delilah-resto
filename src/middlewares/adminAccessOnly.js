@@ -1,4 +1,4 @@
-const adminOnlyAccess = (req, res, next) => {
+const adminAccessOnly = (req, res, next) => {
     /* Check pass criteria:
         1) Admin only.
     */
@@ -8,4 +8,4 @@ const adminOnlyAccess = (req, res, next) => {
 }
 
 
-module.exports = adminOnlyAccess;
+module.exports = adminAccessOnly;

@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Middlewares
 const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
+const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminAccessOnly.js"));
 
 // Connect 2 db.
 const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
@@ -158,7 +158,7 @@ const validate = {
 // List all orders ADM
 router.get("/",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.at_before_after_query,
     async (req, res) => {
         const timeFilters = res.locals.order_time_filter;
@@ -193,7 +193,7 @@ router.get("/:id",
 // Update status of the order ADM - COND 4
 router.put("/:id",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.order_id_param,
     validate.order_state_query,
     async (req, res) => {

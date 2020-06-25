@@ -2,7 +2,7 @@
 Under developing...
 
 ## Instalation
-1. You'll need [nodejs](https://nodejs.org). Check you  already have it installed in your system by typing in your terminal
+1. You'll need [nodejs](https://nodejs.org). Check if you already have it installed in your system by typing in your terminal
 ```bash
 node --version
 ```
@@ -12,7 +12,7 @@ git clone https://github.com/wgnr/delilah-resto
 cd delilah-resto
 npm install
 ```
-3. You have to rename the file ".env_sample" to ".env" and replace YOUR_PASSPHRASE_HERE with your own passphrase.
+3. Rename the file ".env_sample" to ".env" and replace YOUR_PASSPHRASE_HERE with your own passphrase.
 ```bash
 mv .env_sample .env
 sed -i 's/YOUR_PASSPHRASE_HERE/example_of_your_passphrase/g' .env

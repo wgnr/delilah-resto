@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Middlewares
 const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
+const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminAccessOnly.js"));
 
 // Connect 2 db.
 const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
@@ -122,7 +122,7 @@ router.get("/",
 // Create a plate ADM - COND 5,6
 router.post("/",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.dish_post_body,
     async (req, res) => {
         return res.status(201).json(await dishesDB.createNewDish(res.locals.new_dish));
@@ -142,7 +142,7 @@ router.get("/:id",
 // Modify the plate ADM - COND 5,6
 router.put("/:id",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.dish_id_param,
     validate.dish_content_query,
     async (req, res) => {
@@ -164,7 +164,7 @@ router.put("/:id",
 // Delete a plate ADM - COND 5,6
 router.delete("/:id",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.dish_id_param,
     async (req, res) => {
         const dish = res.locals.dish;

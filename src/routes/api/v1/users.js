@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Middlewares
 const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
+const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminAccessOnly.js"));
 
 // Connect 2 db.
 const { usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
@@ -126,7 +126,7 @@ const validate = {
 // Returns all info of user ADM
 router.get("/",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     async (req, res) => {
         if (!res.locals.user.is_admin) return res.sendStatus(401);
         return res.status(201).json(await usersDB.getAllUsers());
@@ -153,7 +153,7 @@ router.get("/:id",
 // Update user info USER
 router.put("/:id",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.user_id_param,
     validate.searched_user,
     validate.user_put_body,
@@ -177,7 +177,7 @@ router.put("/:id",
 // Delete user
 router.delete("/:id",
     tokenValidator,
-    adminOnlyAccess,
+    adminAccessOnly,
     validate.user_id_param,
     validate.searched_user,
     async (req, res) => {
