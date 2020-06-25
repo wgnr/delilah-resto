@@ -198,39 +198,6 @@ router.get("/:id/dishes",
     async (req, res) => {
         const user = res.locals.searched_user;
         return res.status(200).json(await usersDB.getFavDishes(user));
-        // Filter all dishes ordered by user 
-        const sql_favourite_dishes_query =
-            `SELECT dl.id AS id, name, dl.name_short AS name_short, 
-        dl.description AS description, dl.price AS price, 
-        dl.img_path AS img_path, dl.is_available AS is_available, 
-        SUM(od.quantity) AS accumulated 
-        FROM Orders_Dishes AS od INNER JOIN Dishes_List AS dl 
-        ON od.id_dish=dl.id 
-        WHERE od.id_order IN (
-            SELECT id
-            FROM Orders 
-            WHERE id_user=${res.locals.param_id}
-        )
-        GROUP BY od.id_dish
-        ORDER BY 'accumulated' DESC, 'price' DESC, 'name' ASC`;
-
-
-
-
-        return res.status(200).json([
-            {
-                "dish": {
-                    "id": 666,
-                    "name": "Hamburguesa Clásica",
-                    "name_short": "HamClas",
-                    "description": "Hamburguesa 200g de carne, con lechuga y tomate.",
-                    "price": 350,
-                    "img_path": "./src/img/ham-clas.png",
-                    "is_available": true
-                },
-                "accumulated": 20
-            }
-        ]);
     });
 
 

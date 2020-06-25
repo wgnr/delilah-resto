@@ -189,9 +189,6 @@ const db = {
                     accumulated: d.accumulated
                 }
             });
-            console.log(favDishes);
-
-
             return favDishes;
         }
     },
