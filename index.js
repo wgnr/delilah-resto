@@ -23,12 +23,12 @@ sequelize.authenticate()
         // Middleware - Body parser
         app.use(express.json());
         // Middleware - Console logger
-        app.use(require(path.join(__dirname, "middlewares", "logger.js")));
+        app.use(require(path.join(__dirname, "src", "middlewares", "logger.js")));
 
 
         /* Routes */
         // Master route
-        app.use(require(path.join(__dirname, "routes", "routes.js")));
+        app.use(require(path.join(__dirname, "src", "routes", "routes.js")));
 
         // Any other requested path would be responsed by 404
         app.all("*", (req, res) => res.sendStatus(404));
