@@ -1,8 +1,8 @@
 ###########
 # My .gitignore
-design/* # Here I store the "guide" of this project.
-!design/reference_img # Show me reference images for the project
-!design/resources
+# design/* # Here I store the "guide" of this project.
+# !design/reference_img # Show me reference images for the project
+# !design/resources
 	
 # Windows files
 **/[Dd]esktop.ini
