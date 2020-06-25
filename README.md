@@ -12,7 +12,13 @@ git clone https://github.com/wgnr/delilah-resto
 cd delilah-resto
 npm install
 ```
-3. Start server. If you close terminal, server ends.
+3. You have to rename the file ".env_sample" to ".env" and replace YOUR_PASSPHRASE_HERE with your own passphrase.
+```bash
+mv .env_sample .env
+sed -i 's/YOUR_PASSPHRASE_HERE/example_of_your_passphrase/g' .env
+```
+
+4. Start server. If you close terminal, server ends.
 ```bash
 npm start
 ```
@@ -24,11 +30,10 @@ npm start
 
 ## NPM Packages
 - [Express](http://expressjs.com) : Provide an easy-way to handle request and managing routes.
-- [joi](https://www.npmjs.com/package/@hapi/joi) : Object schema validation for incomming request body and params.
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) : Creation and validation of [JWT](https://jwt.io) authorization method.
 - [Sequelize](https://www.npmjs.com/package/sequelize) : ORM for MariaDB.
 - [mysql2](https://www.npmjs.com/package/mysql2) : MySQL client for nodejs. Used to connect with MariaDB.
-- [dotenv](https://www.npmjs.com/package/dotenv) : Used to protect the JWT passphrase. 
+- [dotenv](https://www.npmjs.com/package/dotenv) : Used to protect JWT passphrase. 
 
 
 <!-- # Procedure
