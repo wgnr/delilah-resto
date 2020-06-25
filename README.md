@@ -19,9 +19,15 @@ npm start
 
 ## Used Technologies
 - [nodejs](https://nodejs.org) : Provide core server-side functionalities.
-- [Express](http://expressjs.com) : Provide an easy-way to handle request and managing routes.
-- [JWT](https://jwt.io) : Provide token verification for authorization purposes.
 - [Postman](https://www.postman.com/) : Software used to try API requests.
+
+
+## NPM Packages
+- [Express](http://expressjs.com) : Provide an easy-way to handle request and managing routes.
+- [joi](https://www.npmjs.com/package/@hapi/joi) : Object schema validation for incomming request body and params.
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) : Creation and validation of [JWT](https://jwt.io) authorization method.
+- [Sequelize](https://www.npmjs.com/package/sequelize) : ORM for MariaDB.
+- [mysql2](https://www.npmjs.com/package/mysql2) : MySQL client for nodejs. Used to connect with MariaDB.
 
 
 

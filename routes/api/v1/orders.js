@@ -11,7 +11,7 @@ const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewa
 
 // Connect 2 db.
 const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
-const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
+const { ordersDB, dishesDB, usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Own validation rules
 const validate = {
@@ -28,8 +28,6 @@ const validate = {
     },
 
     dishes: async dishes => {
-        console.log("+++++++++++++Estoy en dishes!");
-
         if (!Array.isArray(dishes)) return "dishes should be an array!";
 
         if (dishes.length === 0) return "No dishes were ordered!";
@@ -42,14 +40,12 @@ const validate = {
             isNaN(+dish.quantity) ||
             !(parseInt(dish.quantity) > 0))) return "Every ordered dish must contain two properties: id -> integer and quantity -> integer>0";
 
-        // Check whether dish exists
-        let dish_id = undefined;
-        if (dishes.some(async dish => {
-            dish_id = +dish.id;
-            const d = await dishesDB.getDish(dish_id);
-            console.log(d);
-            return !d; // TODO tengo un error aca...
-        })) return `The ordered dish id ${dish_id} doesn't exists.`
+        // Check whether dishes exist
+        for (let i = 0; i < dishes.length; i++) {
+            dish_id = +dishes[i].id;
+            const dish = await dishesDB.getDish(dish_id);
+            if (!dish) return `The ordered dish id ${dish_id} is not available.`
+        }
     },
 
     payment_type: payment_type => {
@@ -76,31 +72,40 @@ const validate = {
         };
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
-
         res.locals.order_time_filter = { at, before, after };
         return next();
     },
 
     order_post_body: async (req, res, next) => {
-        console.log("+++++++++++++Estoy en order_post_body!");
-        const order = {};
-        const { dishes, payment_type, address } = req.body;
-        order.dishes = dishes;
-        order.payment_type = +payment_type;
-        order.address = address;
+        const { address } = req.body;
+        let { payment_type, dishes } = req.body;
+        payment_type = +payment_type;
 
-        const a = await validate.dishes(order.dishes);
         // Validate data
         const validations = {
-            val_dishes: a,
-            val_payment_type: validate.payment_type(order.payment_type),
-            val_address: validate.address(order.address)
+            val_dishes: await validate.dishes(dishes),
+            val_payment_type: validate.payment_type(payment_type),
+            val_address: validate.address(address)
         };
-        console.log(validations);
-        
+
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
-        res.locals.order = order;
+        // Reduce dish list -> Sum ordered quantities from same dishes.
+        dishes = dishes.reduce((acc, cur) => {
+            if (!acc) return [cur];
+
+            const dish = acc.find(d => d.id === cur.id);
+            if (!dish) {
+                acc.push(cur);
+                return acc;
+            } else {
+                dish.quantity += cur.quantity;
+                return acc;
+            }
+        }, undefined);
+
+
+        res.locals.order = { dishes, address, payment_type };
         return next();
     },
 
@@ -152,15 +157,9 @@ router.get("/",
     tokenValidator,
     adminOnlyAccess,
     validate.at_before_after_query,
-    (req, res) => {
-        const time_filter = res.locals.order_time_filter;
-
-        // Query depending on selected dates.
-
-        // Get orders from db
-        const orders = db.Orders;
-
-        return res.status(201).json(orders);
+    async (req, res) => {
+        const timeFilters = res.locals.order_time_filter;
+        return res.status(201).json(await ordersDB.getOrders(timeFilters)); // TODO TERMINAR SQL
     }
 );
 
@@ -168,15 +167,19 @@ router.get("/",
 router.post("/",
     tokenValidator,
     validate.order_post_body,
-    (req, res) => {
-        console.log("+++++++++++++Estoy en la ultima parte!");
-        
+    async (req, res) => {
+
         const order = res.locals.order;
         // ID who is trying to create a new order
-        const toWhom = res.locals.user.id;
-        order.id = toWhom;
+        order.userId = res.locals.user.id;
 
-        return res.status(200).json(order);
+
+
+        // TODO CHECKEAR getFavDishes !! ({id})
+
+
+        return res.status(200).json(await usersDB.getFavDishes({ id: order.userId }));
+        // return res.status(200).json(await ordersDB.createNewOrder(order));
     }
 );
 
@@ -189,7 +192,6 @@ router.get("/:id",
         const order_id = res.locals.order_id;
 
         // Search query
-
 
         const order = db.Orders[0];
         return res.status(200).json(order);
