@@ -86,6 +86,5 @@ const Orders =[
       ]
     }
   ];
-const passphrase = "kslasdkljj32kjek23jeljrewkljgkljvfklñjvkljgk4jtkñl34jkrj34ñlk5j34kl5ñklgvrlkgj34jtlk5gv4g54556gv4g65v34g56";
 
-module.exports = { Users, passphrase, Security_Types, Dishes, Orders };
+module.exports = { Users, Security_Types, Dishes, Orders };

@@ -4,7 +4,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 
 // DB Methods
-const { isTypeAdmin, passphrase } = require(path.join(__dirname, "..", "db", "db.js"));
+const { isTypeAdmin } = require(path.join(__dirname, "..", "db", "db.js"));
 
 
 /*
@@ -22,7 +22,7 @@ const tokenValidatior = async (req, res, next) => {
         if (bearer !== "Bearer") return res.status(401).send("Expected Bearer");
 
         // Check whether token is valid
-        const { id, id_security_type } = jwt.verify(token, passphrase);
+        const { id, id_security_type } = jwt.verify(token, process.env.JWT_PASSPHRASE);
         if (!id || !id_security_type) return res.status(401).send("id or id_security_type missing in token");
 
         // Check if id is admin

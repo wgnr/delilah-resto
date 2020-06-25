@@ -7,6 +7,8 @@ design/* # Here I store the "guide" of this project.
 # Windows files
 **/[Dd]esktop.ini
 
+# My JWT passphrase
+.env
 
 ###########
 # Default values for nodejs

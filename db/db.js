@@ -2,12 +2,9 @@
 const path = require("path");
 
 // Connect to Sequelize
-const { sequelize, passphrase } = require(path.join(__dirname, "..", "index.js"));
+const { sequelize } = require(path.join(__dirname, "..", "index.js"));
 
 const db = {
-
-    passphrase,
-
     loginAuth: async (username, password) => {
         const user = await sequelize.query(
             `SELECT * 

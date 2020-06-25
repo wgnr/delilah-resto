@@ -28,7 +28,7 @@ npm start
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) : Creation and validation of [JWT](https://jwt.io) authorization method.
 - [Sequelize](https://www.npmjs.com/package/sequelize) : ORM for MariaDB.
 - [mysql2](https://www.npmjs.com/package/mysql2) : MySQL client for nodejs. Used to connect with MariaDB.
-
+- [dotenv](https://www.npmjs.com/package/dotenv) : Used to protect the JWT passphrase. 
 
 
 <!-- # Procedure

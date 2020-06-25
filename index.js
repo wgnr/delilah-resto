@@ -6,6 +6,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000; // In case PORT is missing in env, 3000 will be used in replace.
+require('dotenv').config(); // Active .env  -> this file holds JWT passphrase
 
 // Start server
 app.listen(PORT, () => {
@@ -40,7 +41,4 @@ sequelize.authenticate()
     });
 
 
-module.exports = {
-    sequelize,
-    passphrase: "kslasdkljj32kjek23jeljrewkljgkljvfklñjvkljgk4jtkñl34jkrj34ñlk5j34kl5ñklgvrlkgj34jtlk5gv4g54556gv4g65v34g56"
-};
+module.exports = { sequelize };
