@@ -10,8 +10,7 @@ const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewar
 const adminOnlyAccess = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminOnlyAccess.js"));
 
 // Connect 2 db.
-const db = require(path.join(__dirname, "..", "..", "..", "db.js"));
-const { ordersDB, dishesDB, usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
+const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Own validation rules
 const validate = {
@@ -109,29 +108,32 @@ const validate = {
         return next();
     },
 
-    order_id_param: (req, res, next) => {
+    order_id_param: async (req, res, next) => {
         let { id: order_id } = req.params;
         order_id = +order_id;
 
         if (isNaN(order_id)) return res.status(400).send("Invalid order ID.");
+
         // Check if order exists
-        if (false) return res.status(404).send("The order ID doesn't exists.")
+        const order = await ordersDB.validations.checkOrderExists(order_id);
+        if (!order) return res.status(404).send("The order ID doesn't exists.")
 
         // Store order id in locals
         res.locals.order_id = order_id;
         return next();
     },
 
-    own_user_data: (req, res, next) => {
+    own_user_data: async (req, res, next) => {
         // If it's admin go on.
         if (res.locals.user.is_admin) return next();
 
         // Check whether order belongs to requester.
-        const toWhom = res.locals.user.id;
+        const requster_id = res.locals.user.id;
         const order_id = res.locals.order_id;
 
-        // Consulta SQL
-        if (false) return res.sendStatus(401);
+        const query = await ordersDB.validations.checkOrderBelongsToUser(order_id, requster_id);
+        if (!query) return res.sendStatus(401);
+
         return next();
     },
 
@@ -142,9 +144,10 @@ const validate = {
         if (isNaN(state)) return res.status(400).send("state query param should be a number.");
 
         // QUery if state code is vald
-        if (false) return res.status(400).send("Invalid state ID.");
+        const check = ordersDB.validations.checkStateId(state)
+        if (!check) return res.status(400).send("Invalid state ID.");
 
-        res.locals.order_state = state;
+        res.locals.order_state_id = state;
         return next();
     }
 };
@@ -168,18 +171,11 @@ router.post("/",
     tokenValidator,
     validate.order_post_body,
     async (req, res) => {
-
         const order = res.locals.order;
         // ID who is trying to create a new order
         order.userId = res.locals.user.id;
 
-
-
-        // TODO CHECKEAR getFavDishes !! ({id})
-
-
-        return res.status(200).json(await usersDB.getFavDishes({ id: order.userId }));
-        // return res.status(200).json(await ordersDB.createNewOrder(order));
+        return res.status(200).json(await ordersDB.createNewOrder(order));
     }
 );
 
@@ -188,13 +184,9 @@ router.get("/:id",
     tokenValidator,
     validate.order_id_param,
     validate.own_user_data,
-    (req, res) => {
+    async (req, res) => {
         const order_id = res.locals.order_id;
-
-        // Search query
-
-        const order = db.Orders[0];
-        return res.status(200).json(order);
+        return res.status(200).json(await ordersDB.getOrder(order_id));
     }
 );
 
@@ -204,12 +196,11 @@ router.put("/:id",
     adminOnlyAccess,
     validate.order_id_param,
     validate.order_state_query,
-    (req, res) => {
+    async (req, res) => {
         const order_id = res.locals.order_id;
-        const new_state = res.locals.order_state;
+        const new_state_id = res.locals.order_state_id;
 
-        const order = db.Orders[0];
-        return res.status(200).json(new_state);
+        return res.status(200).json(await ordersDB.updateOrderState(order_id, new_state_id));
     }
 );
 

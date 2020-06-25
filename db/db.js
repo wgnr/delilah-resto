@@ -280,6 +280,45 @@ const db = {
     },
 
     ordersDB: {
+        validations: {
+            checkOrderExists: async (orderId) => {
+                const query = await sequelize.query(`
+                SELECT id 
+                FROM orders
+                WHERE id=:id`, {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { id: orderId }
+                });
+                if (query.length === 0) return;
+
+                return query;
+            },
+            checkOrderBelongsToUser: async (orderId, userID) => {
+                const query = await sequelize.query(`
+                SELECT id 
+                FROM orders
+                WHERE id=:id and id_user=:userID`, {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { id: orderId, userID }
+                });
+                if (query.length === 0) return;
+
+                return query;
+            },
+            checkStateId: async (stateId) => {
+                const query = await sequelize.query(`
+                SELECT id 
+                FROM status_type
+                WHERE id=:id`, {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { id: stateId }
+                });
+                if (query.length === 0) return;
+
+                return query;
+            }
+        },
+
         getOrders: async (timeFilters) => {
             const { at, before, after } = timeFilters;
             // TODO TERMINAR SQL
@@ -476,7 +515,43 @@ const db = {
             })();
 
 
-            return db.ordersDB.getOrder(newOrderId);
+            return await db.ordersDB.getOrder(newOrderId);
+        },
+
+        updateOrderState: async (orderID, stateId) => {
+            const nowTimestamp = (new Date).toISOString(); // Current timestamp
+
+            const insertOrderState = await (async () => {
+                const timestamp = nowTimestamp;
+                const query = await sequelize.query(`
+                    INSERT INTO order_status 
+                    (id_status,id_order, timestamp) 
+                    VALUES (:id_status,:id_order,:timestamp)`,
+                    {
+                        type: sequelize.QueryTypes.INSERT,
+                        replacements: { id_status: stateId, id_order: orderID, timestamp }
+                    });
+
+                const newID = query[0];
+                return newID;
+            })();
+
+            const updateOrderInfo = await (async () => {
+                const timestamp = nowTimestamp;
+                const query = await sequelize.query(`
+                    UPDATE orders 
+                    SET id_order_status=:id_order_status, updated_at=:updated_at 
+                    WHERE id=:id`,
+                    {
+                        type: sequelize.QueryTypes.INSERT,
+                        replacements: { id_order_status: insertOrderState, updated_at: timestamp, id: orderID }
+                    });
+
+                const newID = query[0];
+                return newID;
+            })();
+
+            return await db.ordersDB.getOrder(orderID);
         }
     }
 }
