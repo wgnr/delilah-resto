@@ -10,6 +10,9 @@
 # My JWT passphrase
 .env
 
+# Folder containing testing script.
+.vscode/
+
 ###########
 # Default values for nodejs
 
