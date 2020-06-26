@@ -317,10 +317,31 @@ const db = {
         },
 
         getOrders: async (timeFilters) => {
-            const { at, before, after } = timeFilters;
+            let { at, before, after } = timeFilters;
             // TODO TERMINAR SQL
 
+            // CASE 1 : No parameter is specified ----> query current day only.
+            if (!at && !before && !after) {
+                at = new Date().toISOString().slice(0, 10);;
+            }
+            const dateColumn = "date(created_at)";
+            // Let's build the where condition, the result would be somethin like: WHERE created_at=at OR (created_at>=after AND created_at<=before)
+            const WHERE = `WHERE ${at ? dateColumn + "='" + at +"'": ""} ${at && (before || after) ? " OR (" : ""} ${before ? dateColumn + "<='" + before +"'" : ""} ${before && after ? " AND " : ""} ${after ? dateColumn + ">='" + after +"'" : ""} ${at && (before || after) ? ")" : ""}`
 
+            const queryIDs = await sequelize.query(`
+            SELECT id 
+            FROM orders
+            ${WHERE}`, { // 🤷‍♂️
+                type: sequelize.QueryTypes.SELECT
+            });
+
+            // For EACH order ... query :|... WORST METHOD... 
+            const response = [];
+            for (let i = 0; i < queryIDs.length; i++) {
+                const {id} = queryIDs[i];
+                response.push(await db.ordersDB.getOrder(id));
+            }
+            return response;
         },
 
         getOrder: async (orderID) => {

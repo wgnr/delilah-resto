@@ -14,18 +14,6 @@ const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "d
 
 // Own validation rules
 const validate = {
-    at: at => {
-        if (isNaN(at)) return "Expected format date YYYY-MM-DD";
-    },
-
-    before: before => {
-        if (isNaN(before)) return "Expected format date YYYY-MM-DD";
-    },
-
-    after: after => {
-        if (isNaN(after)) return "Expected format date YYYY-MM-DD";
-    },
-
     dishes: async dishes => {
         if (!Array.isArray(dishes)) return "dishes should be an array!";
 
@@ -59,19 +47,22 @@ const validate = {
 
     at_before_after_query: (req, res, next) => {
         let { at, before, after } = req.query;
-        at = Date.parse(at);
-        before = Date.parse(before);
-        after = Date.parse(after);
+        const timeFilters = { at, before, after };
 
-        // Validate data
-        const validations = {
-            val_at: at && validate.at(at),
-            val_before: before && validate.before(before),
-            val_after: after && validate.after(after)
-        };
-        for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
+        // Validations
+        for (let prop in timeFilters) {
+            if (timeFilters[prop]) {
+                console.log(timeFilters[prop]);
+                
+                timeFilters[prop] = Date.parse(timeFilters[prop]);
+                if (isNaN(timeFilters[prop])) return res.status(400).send("Invalid date inserted, please use ISO notation YYYY-MM-DD.");
 
-        res.locals.order_time_filter = { at, before, after };
+                timeFilters[prop] = new Date(timeFilters[prop]).toISOString().slice(0,10); // I need a date format like YYYY-MM-DD
+            }
+        }
+
+
+        res.locals.order_time_filter = timeFilters;
         return next();
     },
 
@@ -162,7 +153,7 @@ router.get("/",
     validate.at_before_after_query,
     async (req, res) => {
         const timeFilters = res.locals.order_time_filter;
-        return res.status(201).json(await ordersDB.getOrders(timeFilters)); // TODO TERMINAR SQL
+        return res.status(201).json(await ordersDB.getOrders(timeFilters));
     }
 );
 
