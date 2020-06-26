@@ -1,0 +1,1640 @@
+{
+	"info": {
+		"_postman_id": "ddb08d04-3ffb-4580-a737-c00ade3531d4",
+		"name": "delilah-resto",
+		"description": "API interfase for provingin information to front-end.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "{id}",
+					"item": [
+						{
+							"name": "Get user's information.",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2",
+											"type": "string",
+											"description": "(Required) User's ID"
+										}
+									]
+								},
+								"description": "Admin will be able to fetch any info. User only can view its own."
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 5487,\n \"full_name\": \"Freddie Mercury\",\n \"username\": \"queen_freddie\",\n \"email\": \"freddiemercury@gmail.com\",\n \"phone\": 447712345678,\n \"address\": \"Maipu 999 1º A\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update user's information.",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\": \"Don Ricardo del Leonor\",\n    \"password\": \"nueva_password\",\n    \"id_security_type\":\"2\"\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2",
+											"type": "string",
+											"description": "(Required) User's ID"
+										}
+									]
+								},
+								"description": "Admin will be able to change any info. User only can edit its own."
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"full_name\": \"Freddie Mercury\",\n    \"username\": \"queen_freddie\",\n    \"email\": \"freddiemercury@gmail.com\",\n    \"phone\": 447712345678,\n    \"address\": \"Maipu 999 1º A\",\n    \"password\": \"my_personal_password\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"full_name\": \"Freddie Mercury\",\n    \"username\": \"queen_freddie\",\n    \"email\": \"freddiemercury@gmail.com\",\n    \"phone\": 447712345678,\n    \"address\": \"Maipu 999 1º A\",\n    \"password\": \"my_personal_password\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"full_name\": \"Freddie Mercury\",\n \"username\": \"queen_freddie\",\n \"email\": \"freddiemercury@gmail.com\",\n \"phone\": 447712345678,\n \"address\": \"Maipu 999 1º A\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete user.",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2",
+											"type": "string",
+											"description": "(Required) User's ID"
+										}
+									]
+								},
+								"description": "Admin will be able to delete any user. User is not allowed."
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "User was deleted.",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get user's favourite dishes.",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/:id/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":id",
+										"dishes"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2",
+											"type": "string",
+											"description": "(Required) User's ID"
+										}
+									]
+								},
+								"description": "Returns all plates requested by user ordered by consume quantity."
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id/dishes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id",
+												"dishes"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/users/:id/dishes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":id",
+												"dishes"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n {\n  \"dish\": {\n   \"id\": 666,\n   \"name\": \"Hamburguesa Clásica\",\n   \"name_short\": \"HamClas\",\n   \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n   \"price\": 350,\n   \"img_path\": \"./src/img/ham-clas.png\",\n   \"is_available\": true\n  },\n  \"accumulated\": 20\n },\n {\n  \"dish\": {\n   \"id\": 666,\n   \"name\": \"Hamburguesa Clásica\",\n   \"name_short\": \"HamClas\",\n   \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n   \"price\": 350,\n   \"img_path\": \"./src/img/ham-clas.png\",\n   \"is_available\": true\n  },\n  \"accumulated\": 20\n }\n]"
+								}
+							]
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Returns all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Only admin can query."
+					},
+					"response": [
+						{
+							"name": "Access token is missing or invalid",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Created",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n {\n  \"id\": 5487,\n  \"full_name\": \"Freddie Mercury\",\n  \"username\": \"queen_freddie\",\n  \"email\": \"freddiemercury@gmail.com\",\n  \"phone\": 447712345678,\n  \"address\": \"Maipu 999 1º A\"\n },\n {\n  \"id\": 5487,\n  \"full_name\": \"Freddie Mercury\",\n  \"username\": \"queen_freddie\",\n  \"email\": \"freddiemercury@gmail.com\",\n  \"phone\": 447712345678,\n  \"address\": \"Maipu 999 1º A\"\n }\n]"
+						}
+					]
+				},
+				{
+					"name": "Create a new user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"Ricardio\",\n    \"username\": \"Bro_22\",\n    \"email\": \"r@bro.com\",\n    \"phone\": \"+54938475214\",\n    \"address\": \"Ocampo 1234\",\n    \"password\": \"yesmaster\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Create a new user passing in its body the corresponding object."
+					},
+					"response": [
+						{
+							"name": "Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\": \"Freddie Mercury\",\n    \"username\": \"queen_freddie\",\n    \"email\": \"freddiemercury@gmail.com\",\n    \"phone\": 447712345678,\n    \"address\": \"Maipu 999 1º A\",\n    \"password\": \"my_personal_password\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"id\": 5487,\n \"full_name\": \"Freddie Mercury\",\n \"username\": \"queen_freddie\",\n \"email\": \"freddiemercury@gmail.com\",\n \"phone\": 447712345678,\n \"address\": \"Maipu 999 1º A\"\n}"
+						},
+						{
+							"name": "Incorrect information given",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\": \"Freddie Mercury\",\n    \"username\": \"queen_freddie\",\n    \"email\": \"freddiemercury@gmail.com\",\n    \"phone\": 447712345678,\n    \"address\": \"Maipu 999 1º A\",\n    \"password\": \"my_personal_password\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "dishes",
+			"item": [
+				{
+					"name": "{id}",
+					"item": [
+						{
+							"name": "Get dish.",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/dishes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "666",
+											"type": "string",
+											"description": "(Required) Dish's ID"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 666,\n \"name\": \"Hamburguesa Clásica\",\n \"name_short\": \"HamClas\",\n \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n \"price\": 350,\n \"img_path\": \"./src/img/ham-clas.png\",\n \"is_available\": true\n}"
+								},
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Modify dish's information.",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"<string>\",\n    \"name_short\": \"<string>\",\n    \"description\": \"<string>\",\n    \"price\": \"<number>\",\n    \"img_path\": \"<string>\",\n    \"is_available\": \"<boolean>\"\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dishes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "666",
+											"type": "string",
+											"description": "(Required) Dish's ID"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 666,\n \"name\": \"Hamburguesa Clásica\",\n \"name_short\": \"HamClas\",\n \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n \"price\": 350,\n \"img_path\": \"./src/img/ham-clas.png\",\n \"is_available\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete dish.",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/dishes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "666",
+											"type": "string",
+											"description": "(Required) Dish's ID"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Dish was deleted.",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/dishes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"dishes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get all available dishes.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/dishes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dishes"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n {\n  \"id\": 666,\n  \"name\": \"Hamburguesa Clásica\",\n  \"name_short\": \"HamClas\",\n  \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n  \"price\": 350,\n  \"img_path\": \"./src/img/ham-clas.png\",\n  \"is_available\": true\n },\n {\n  \"id\": 666,\n  \"name\": \"Hamburguesa Clásica\",\n  \"name_short\": \"HamClas\",\n  \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n  \"price\": 350,\n  \"img_path\": \"./src/img/ham-clas.png\",\n  \"is_available\": true\n }\n]"
+						},
+						{
+							"name": "Access token is missing or invalid",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Create a new dish",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Polenta\",\n    \"name_short\": \"Po\",\n    \"description\": \"Polenta con salsa\",\n    \"price\": 200,\n    \"img_path\": \"./src/img/polenta.png\",\n    \"is_available\": true\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dishes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dishes"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Access token is missing or invalid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Dish was created!",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"dishes"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"id\": 666,\n \"name\": \"Hamburguesa Clásica\",\n \"name_short\": \"HamClas\",\n \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n \"price\": 350,\n \"img_path\": \"./src/img/ham-clas.png\",\n \"is_available\": true\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "{id}",
+					"item": [
+						{
+							"name": "Get order info",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/orders/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5412",
+											"type": "string",
+											"description": "(Required) Order ID"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/orders/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"orders",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 5412,\n \"number\": 500,\n \"address\": \"Montevideo 1212 1B\",\n \"created_at\": \"<dateTime>\",\n \"updated_at\": \"<dateTime>\",\n \"description\": \"1xHamClas 1xSandVegg\",\n \"status\": [\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  },\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  }\n ],\n \"user\": {\n  \"id\": 5487,\n  \"full_name\": \"Freddie Mercury\",\n  \"username\": \"queen_freddie\",\n  \"email\": \"freddiemercury@gmail.com\",\n  \"phone\": 447712345678,\n  \"address\": \"Maipu 999 1º A\"\n },\n \"payment\": {\n  \"type\": 2,\n  \"total\": 650\n },\n \"dishes\": [\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  },\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  }\n ]\n}"
+								},
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/orders/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"orders",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Update order status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/orders/:id?state=2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders",
+										":id"
+									],
+									"query": [
+										{
+											"key": "state",
+											"value": "2",
+											"description": "(Required) New state of the order"
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5412",
+											"type": "string",
+											"description": "(Required) Order ID"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/orders/:id?state=<number>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"orders",
+												":id"
+											],
+											"query": [
+												{
+													"key": "state",
+													"value": "<number>"
+												}
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"id\": 5412,\n \"number\": 500,\n \"address\": \"Montevideo 1212 1B\",\n \"created_at\": \"<dateTime>\",\n \"updated_at\": \"<dateTime>\",\n \"description\": \"1xHamClas 1xSandVegg\",\n \"status\": [\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  },\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  }\n ],\n \"user\": {\n  \"id\": 5487,\n  \"full_name\": \"Freddie Mercury\",\n  \"username\": \"queen_freddie\",\n  \"email\": \"freddiemercury@gmail.com\",\n  \"phone\": 447712345678,\n  \"address\": \"Maipu 999 1º A\"\n },\n \"payment\": {\n  \"type\": 2,\n  \"total\": 650\n },\n \"dishes\": [\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  },\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  }\n ]\n}"
+								},
+								{
+									"name": "Access token is missing or invalid",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/orders/:id?state=<number>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"orders",
+												":id"
+											],
+											"query": [
+												{
+													"key": "state",
+													"value": "<number>"
+												}
+											],
+											"variable": [
+												{
+													"key": "id"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Returns all orders depending on params.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders?at=2020-01-04",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "at",
+									"value": "2020-01-04",
+									"description": "Filter orders based on exact ISO date."
+								},
+								{
+									"key": "before",
+									"value": "",
+									"description": "Filter orders before or equal ISO date.",
+									"disabled": true
+								},
+								{
+									"key": "after",
+									"value": "2020-01-04",
+									"description": "Filter orders after or equal ISO date.",
+									"disabled": true
+								}
+							]
+						},
+						"description": "If no param if specified, orders from current day will be fetched. Before and after filters together and \"at\" add the date to the filter result."
+					},
+					"response": [
+						{
+							"name": "Access token is missing or invalid",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/orders?at=<date>&before=<date>&after=<date>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders"
+									],
+									"query": [
+										{
+											"key": "at",
+											"value": "<date>"
+										},
+										{
+											"key": "before",
+											"value": "<date>"
+										},
+										{
+											"key": "after",
+											"value": "<date>"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Array of orders.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/orders?at=<date>&before=<date>&after=<date>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders"
+									],
+									"query": [
+										{
+											"key": "at",
+											"value": "<date>"
+										},
+										{
+											"key": "before",
+											"value": "<date>"
+										},
+										{
+											"key": "after",
+											"value": "<date>"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n {\n  \"id\": 5412,\n  \"number\": 500,\n  \"address\": \"Montevideo 1212 1B\",\n  \"created_at\": \"<dateTime>\",\n  \"updated_at\": \"<dateTime>\",\n  \"description\": \"1xHamClas 1xSandVegg\",\n  \"status\": [\n   {\n    \"status\": \"En Preparaciòn\",\n    \"timestamp\": \"<dateTime>\"\n   },\n   {\n    \"status\": \"En Preparaciòn\",\n    \"timestamp\": \"<dateTime>\"\n   }\n  ],\n  \"user\": {\n   \"id\": 5487,\n   \"full_name\": \"Freddie Mercury\",\n   \"username\": \"queen_freddie\",\n   \"email\": \"freddiemercury@gmail.com\",\n   \"phone\": 447712345678,\n   \"address\": \"Maipu 999 1º A\"\n  },\n  \"payment\": {\n   \"type\": 2,\n   \"total\": 650\n  },\n  \"dishes\": [\n   {\n    \"dish\": {\n     \"id\": 666,\n     \"name\": \"Hamburguesa Clásica\",\n     \"name_short\": \"HamClas\",\n     \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n     \"price\": 350,\n     \"img_path\": \"./src/img/ham-clas.png\",\n     \"is_available\": true\n    },\n    \"ordered\": 3,\n    \"purchased_price\": 250,\n    \"subtotal\": 750\n   },\n   {\n    \"dish\": {\n     \"id\": 666,\n     \"name\": \"Hamburguesa Clásica\",\n     \"name_short\": \"HamClas\",\n     \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n     \"price\": 350,\n     \"img_path\": \"./src/img/ham-clas.png\",\n     \"is_available\": true\n    },\n    \"ordered\": 3,\n    \"purchased_price\": 250,\n    \"subtotal\": 750\n   }\n  ]\n },\n {\n  \"id\": 5412,\n  \"number\": 500,\n  \"address\": \"Montevideo 1212 1B\",\n  \"created_at\": \"<dateTime>\",\n  \"updated_at\": \"<dateTime>\",\n  \"description\": \"1xHamClas 1xSandVegg\",\n  \"status\": [\n   {\n    \"status\": \"En Preparaciòn\",\n    \"timestamp\": \"<dateTime>\"\n   },\n   {\n    \"status\": \"En Preparaciòn\",\n    \"timestamp\": \"<dateTime>\"\n   }\n  ],\n  \"user\": {\n   \"id\": 5487,\n   \"full_name\": \"Freddie Mercury\",\n   \"username\": \"queen_freddie\",\n   \"email\": \"freddiemercury@gmail.com\",\n   \"phone\": 447712345678,\n   \"address\": \"Maipu 999 1º A\"\n  },\n  \"payment\": {\n   \"type\": 2,\n   \"total\": 650\n  },\n  \"dishes\": [\n   {\n    \"dish\": {\n     \"id\": 666,\n     \"name\": \"Hamburguesa Clásica\",\n     \"name_short\": \"HamClas\",\n     \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n     \"price\": 350,\n     \"img_path\": \"./src/img/ham-clas.png\",\n     \"is_available\": true\n    },\n    \"ordered\": 3,\n    \"purchased_price\": 250,\n    \"subtotal\": 750\n   },\n   {\n    \"dish\": {\n     \"id\": 666,\n     \"name\": \"Hamburguesa Clásica\",\n     \"name_short\": \"HamClas\",\n     \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n     \"price\": 350,\n     \"img_path\": \"./src/img/ham-clas.png\",\n     \"is_available\": true\n    },\n    \"ordered\": 3,\n    \"purchased_price\": 250,\n    \"subtotal\": 750\n   }\n  ]\n }\n]"
+						}
+					]
+				},
+				{
+					"name": "Create a new order for the user.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dishes\": [\n        {\n            \"id\": 2,\n            \"quantity\": 7\n        },\n        {\n            \"id\":1,\n            \"quantity\": 2\n        }\n    ],\n    \"payment_type\": 2,\n    \"address\": \"Ocampo 23432\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						},
+						"description": "User's ID will be found inside token, so it's not necessary."
+					},
+					"response": [
+						{
+							"name": "Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dishes\": [\n        {\n            \"id\": 15,\n            \"quantity\": 3\n        },\n        {\n            \"id\": 15,\n            \"quantity\": 3\n        }\n    ],\n    \"payment_type\": 2,\n    \"address\": \"Montevideo 1212 1B\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/orders",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"id\": 5412,\n \"number\": 500,\n \"address\": \"Montevideo 1212 1B\",\n \"created_at\": \"<dateTime>\",\n \"updated_at\": \"<dateTime>\",\n \"description\": \"1xHamClas 1xSandVegg\",\n \"status\": [\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  },\n  {\n   \"status\": \"En Preparaciòn\",\n   \"timestamp\": \"<dateTime>\"\n  }\n ],\n \"user\": {\n  \"id\": 5487,\n  \"full_name\": \"Freddie Mercury\",\n  \"username\": \"queen_freddie\",\n  \"email\": \"freddiemercury@gmail.com\",\n  \"phone\": 447712345678,\n  \"address\": \"Maipu 999 1º A\"\n },\n \"payment\": {\n  \"type\": 2,\n  \"total\": 650\n },\n \"dishes\": [\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  },\n  {\n   \"dish\": {\n    \"id\": 666,\n    \"name\": \"Hamburguesa Clásica\",\n    \"name_short\": \"HamClas\",\n    \"description\": \"Hamburguesa 200g de carne, con lechuga y tomate.\",\n    \"price\": 350,\n    \"img_path\": \"./src/img/ham-clas.png\",\n    \"is_available\": true\n   },\n   \"ordered\": 3,\n   \"purchased_price\": 250,\n   \"subtotal\": 750\n  }\n ]\n}"
+						},
+						{
+							"name": "Access token is missing or invalid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dishes\": [\n        {\n            \"id\": 15,\n            \"quantity\": 3\n        },\n        {\n            \"id\": 15,\n            \"quantity\": 3\n        }\n    ],\n    \"payment_type\": 2,\n    \"address\": \"Montevideo 1212 1B\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/orders",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Get token.",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/login?username=admin&password=admin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "admin",
+							"description": "(Required) "
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"description": "(Required) "
+						}
+					]
+				},
+				"description": "Pass as query arguments username and password."
+			},
+			"response": [
+				{
+					"name": "Invalid username or password",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/login?username=queen_freddie&password=my_personal_password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "queen_freddie"
+								},
+								{
+									"key": "password",
+									"value": "my_personal_password"
+								}
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/login?username=queen_freddie&password=my_personal_password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "queen_freddie"
+								},
+								{
+									"key": "password",
+									"value": "my_personal_password"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE1MTYyMzkwMjJ9.C7eecdX_pumR-P1Kv3q3fkp27Jtian0VJKy4XpStmt8\"\n}"
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUyLCJpZF9zZWN1cml0eV90eXBlIjoxLCJpYXQiOjE1OTMxMjY3Mjh9.iaU_tK8_Gdi_SWHZcHviPIK1o18QB6mnjMqI4vA2kZ8",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d09916f8-c8a6-4c4b-ac3d-f8d5290789ac",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "74ca1752-6968-4f14-8fea-9d14a754b73e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "282c4e87-65d2-41d3-a08f-408f3051d861",
+			"key": "baseUrl",
+			"value": "localhost:3000/api/v1"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
