@@ -1,7 +1,6 @@
 /*
     This file holds all routes belonging to /users.
 */
-
 const path = require("path");
 const express = require("express");
 const router = express.Router();
@@ -14,7 +13,7 @@ const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewa
 const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 
-// Own validation rules
+// Dishes own validation rules. All of them try to avoid to insert invalid data in the DB.
 const validate = {
     name: name => {
         if (!name) return "Empty name."
@@ -113,13 +112,13 @@ const validate = {
     }
 };
 
-// List all dishes PUBLIC - COND 2
+// List all dishes
 router.get("/",
     tokenValidator,
     async (req, res) => res.status(201).json(await dishesDB.getAllDishes())
 );
 
-// Create a plate ADM - COND 5,6
+// Create a plate
 router.post("/",
     tokenValidator,
     adminAccessOnly,
@@ -129,7 +128,7 @@ router.post("/",
     }
 );
 
-// List all dishes PUBLIC - COND 2
+// List all dishes
 router.get("/:id",
     tokenValidator,
     validate.dish_id_param,
@@ -139,7 +138,7 @@ router.get("/:id",
     }
 );
 
-// Modify the plate ADM - COND 5,6
+// Modify the plate
 router.put("/:id",
     tokenValidator,
     adminAccessOnly,
@@ -161,7 +160,7 @@ router.put("/:id",
     }
 );
 
-// Delete a plate ADM - COND 5,6
+// Delete a plate
 router.delete("/:id",
     tokenValidator,
     adminAccessOnly,

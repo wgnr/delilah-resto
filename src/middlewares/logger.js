@@ -1,3 +1,6 @@
+/*
+Simple logger to monitor every request with its content 
+*/
 const logger = (req, res, next) => {
     console.log("\n"+`${new Date().toLocaleString()} - ${req.ip} ${req.method} ${req.originalUrl}`);
     if (Object.keys(req.query).length) console.log("query : " + JSON.stringify(req.query, null, 1));

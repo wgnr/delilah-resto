@@ -1,7 +1,7 @@
 /*
     This file holds all routes belonging to /login.
 */
-
+const path = require("path");
 const express = require("express");
 const router = express.Router();
 
@@ -9,7 +9,6 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 // Connect 2 db.
-const path = require("path");
 const { loginAuth } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 // Get token containing user's ID
@@ -27,7 +26,7 @@ router.get("/", async (req, res) => {
     if (!id || !id_security_type) return res.sendStatus(401);
 
     // Generate token
-    const token = jwt.sign({ id, id_security_type }, process.env.JWT_PASSPHRASE);
+    const token = jwt.sign({ id, id_security_type }, process.env.JWT_PASSPHRASE);       // PASSPHRASE is declared in the file .env
 
     return res.status(200).json({ token });
 });

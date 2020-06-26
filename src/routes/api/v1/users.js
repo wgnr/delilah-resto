@@ -1,7 +1,6 @@
 /*
     This file holds all routes belonging to /users.
 */
-
 const path = require("path");
 const express = require("express");
 const router = express.Router();
@@ -13,7 +12,7 @@ const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewa
 // Connect 2 db.
 const { usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
-// Own validation rules
+// Users own validation rules. All of them try to avoid to insert invalid data in the DB.
 const validate = {
     full_name: full_name => {
         if (!full_name) return "Empty full_name.";
@@ -65,6 +64,7 @@ const validate = {
             val_address: validate.address(address),
             val_password: validate.password(password)
         };
+        // If any validation find an error, exit.
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
         res.locals.new_user = { full_name, username, email, phone, address, password };
@@ -115,7 +115,7 @@ const validate = {
             val_password: password && validate.password(password),
             id_security_type: (res.locals.user.is_admin && id_security_type) && validate.id_security_type(id_security_type)
         }
-
+        // If any validation find an error, exit.
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
         res.locals.updated_info = { full_name, username, email, phone, address, password, id_security_type };
@@ -123,7 +123,7 @@ const validate = {
     }
 }
 
-// Returns all info of user ADM
+// Returns all info of user
 router.get("/",
     tokenValidator,
     adminAccessOnly,
@@ -132,14 +132,14 @@ router.get("/",
         return res.status(201).json(await usersDB.getAllUsers());
     });
 
-// Create a new user USER - COND 1,6
+// Create a new user
 router.post("/",
     validate.user_post_body,
     async (req, res) => {
         return res.status(201).json(await usersDB.createNewUser(res.locals.new_user));
     });
 
-// Returns info user USER - COND 6 + it's favourite plates
+// Returns user's info
 router.get("/:id",
     tokenValidator,
     validate.user_id_param,
@@ -150,7 +150,7 @@ router.get("/:id",
         return res.status(200).json(user);
     });
 
-// Update user info USER
+// Update user's info
 router.put("/:id",
     tokenValidator,
     adminAccessOnly,
@@ -189,7 +189,7 @@ router.delete("/:id",
         return res.sendStatus(204);
     });
 
-// Get user favourite dishes
+// Get user's favourite dishes
 router.get("/:id/dishes",
     tokenValidator,
     validate.user_id_param,

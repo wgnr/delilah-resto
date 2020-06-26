@@ -12,7 +12,7 @@ const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewa
 // Connect 2 db.
 const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
-// Own validation rules
+// Orders own validation rules. All of them try to avoid to insert invalid data in the DB.
 const validate = {
     dishes: async dishes => {
         if (!Array.isArray(dishes)) return "dishes should be an array!";
@@ -49,15 +49,15 @@ const validate = {
         let { at, before, after } = req.query;
         const timeFilters = { at, before, after };
 
-        // Validations
+        // Dates validation
         for (let prop in timeFilters) {
             if (timeFilters[prop]) {
                 console.log(timeFilters[prop]);
-                
+
                 timeFilters[prop] = Date.parse(timeFilters[prop]);
                 if (isNaN(timeFilters[prop])) return res.status(400).send("Invalid date inserted, please use ISO notation YYYY-MM-DD.");
 
-                timeFilters[prop] = new Date(timeFilters[prop]).toISOString().slice(0,10); // I need a date format like YYYY-MM-DD
+                timeFilters[prop] = new Date(timeFilters[prop]).toISOString().slice(0, 10); // I need a date format like YYYY-MM-DD
             }
         }
 
@@ -80,7 +80,7 @@ const validate = {
 
         for (let val in validations) if (validations[val]) return res.status(400).send(validations[val]);
 
-        // Reduce dish list -> Sum ordered quantities from same dishes.
+        // Reduce dish list -> Agregate quantities for same dishies. This prevent to have multiples queries for dame dish's id
         dishes = dishes.reduce((acc, cur) => {
             if (!acc) return [cur];
 
@@ -146,7 +146,17 @@ const validate = {
 
 /* PATHS */
 
-// List all orders ADM
+// List all orders
+/*
+According to documentation if no param is specified, i will return all orders for the current date.
+AT query param: Filter orders for an specific date.
+            UNION
+BEFORE query param: Filter orders before or equal to certain date.
+            AND
+AFTER query param: Filter orders after or equal to certain date.
+
+Date must be ISO YYYY-MM-DD
+*/
 router.get("/",
     tokenValidator,
     adminAccessOnly,
@@ -181,7 +191,7 @@ router.get("/:id",
     }
 );
 
-// Update status of the order ADM - COND 4
+// Update status of the order
 router.put("/:id",
     tokenValidator,
     adminAccessOnly,

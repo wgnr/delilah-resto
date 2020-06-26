@@ -22,7 +22,7 @@ const tokenValidatior = async (req, res, next) => {
         if (bearer !== "Bearer") return res.status(401).send("Expected Bearer");
 
         // Check whether token is valid
-        const { id, id_security_type } = jwt.verify(token, process.env.JWT_PASSPHRASE);
+        const { id, id_security_type } = jwt.verify(token, process.env.JWT_PASSPHRASE);     // PASSPHRASE is declared in the file .env
         if (!id || !id_security_type) return res.status(401).send("id or id_security_type missing in token");
 
         // Check if id is admin

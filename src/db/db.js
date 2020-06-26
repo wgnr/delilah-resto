@@ -1,3 +1,7 @@
+/*
+    This file contains all the SQL queries used in the entire project.
+*/
+
 // Build-in libs
 const path = require("path");
 
@@ -40,6 +44,7 @@ const db = {
         return securityProfile[0].type === "Admin" ? true : false;
     },
 
+    
     usersDB: {
 
         getAllUsers: async () => {

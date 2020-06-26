@@ -8,8 +8,7 @@ The goal of this proyect is to build an API REST to manage a food store's orders
 - CRUD Dishes methods
 - CRUD Orders methods
 - Request's body ad params validation
-- User's favourite dishes method.
-
+- User's favorites dishes method.
 
 ## How to try it
 ### 1. Setting up DB
@@ -45,7 +44,7 @@ npm start
 ### 3. Endpoints Description
 The endpoints are detailed in [this YALM file](./design/API/delilah-resto-API-spec.yml) and they were designed following the [OPEN API specifications](https://swagger.io/specification/#:~:text=Introduction,or%20through%20network%20traffic%20inspection.) and the suggestions of [this handbook](https://pages.apigee.com/rs/apigee/images/api-design-ebook-2012-03.pdf).
 
-A detailed [documentation file](./design/API/delilah-rsto-API-Documentation.html) is provided but instead, I encourage you to copy the content of the [YALM file](./design/API/delilah-resto-API-spec.yml) and paste it into the [Swagger Editor](https://editor.swagger.io/#) for a more clear view.
+A detailed [documentation file](./design/API/delilah-rsto-API-Documentation.html) is provided but instead, I encourage you to copy the content of the [YALM file](./design/API/delilah-resto-API-spec.yml) and paste it into the [Swagger Editor](https://editor.swagger.io/#) for a clearer view.
 
 ### 4. Endpoints Testing
 A complete list of functional endpoints with examples are included in [this file](./test/delilah-resto-endpoints.postman_collection), you only have to import them in the [Postman](https://www.postman.com/) application.
@@ -55,13 +54,11 @@ Take in mind that most of the endpoints have restrictions, thus be sure to **spe
 ### 5. Ready to use 🏁 🎊🎉
 All you need to try this was explained ✔. Have fun!
 
-
 ## Used Technologies
 - [XAMPP](https://www.apachefriends.org/index.html): Provide MySQL server-side functionality. 
 - [Swagger](https://editor.swagger.io/) : Used for OPEN API documentation reading and designing of the API endpoints.
 - [Postman](https://www.postman.com/) : Endpoint testing.
 - [Node.js](https://nodejs.org) : Provide core server-side functionalities.
-
 
 ## NPM Packages
 - [Express](http://expressjs.com) : Framework that provides an easy-way to handle request and managing routes.
