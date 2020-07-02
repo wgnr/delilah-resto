@@ -62,6 +62,7 @@ All you need to try this was explained ✔. Have fun!
 
 ## NPM Packages
 - [Express](http://expressjs.com) : Framework that provides an easy-way to handle request and managing routes.
+- [express-validator](https://express-validator.github.io/) : For validation and sanitization of request's body and query params.
 - [nodemon](https://www.npmjs.com/package/nodemon) : Used in dev instance for fast server reloading.
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) : Creation and validation of [JWT](https://jwt.io) authorization method.
 - [dotenv](https://www.npmjs.com/package/dotenv) : Used to protect JWT passphrase. 

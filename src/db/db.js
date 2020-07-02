@@ -44,7 +44,7 @@ const db = {
         return securityProfile[0].type === "Admin" ? true : false;
     },
 
-    
+
     usersDB: {
 
         getAllUsers: async () => {
@@ -207,6 +207,17 @@ const db = {
 
             return dishesList;
         },
+        getAllDishesId: async () => {
+            const dishesList = await sequelize.query(
+                `SELECT id 
+                FROM dishes_list 
+                WHERE is_available=TRUE`,
+                {
+                    type: sequelize.QueryTypes.SELECT
+                });
+
+            return dishesList;
+        },
 
         getDish: async (id) => {
             const oneDish = await sequelize.query(
@@ -295,25 +306,33 @@ const db = {
 
                 return query;
             },
-            checkOrderBelongsToUser: async (orderId, userID) => {
+            checkOrderBelongsToUser: async ({ orderId, userID }) => {
                 const query = await sequelize.query(`
                 SELECT id 
                 FROM orders
-                WHERE id=:id and id_user=:userID`, {
+                WHERE id=:orderId and id_user=:userID`, {
                     type: sequelize.QueryTypes.SELECT,
-                    replacements: { id: orderId, userID }
+                    replacements: { orderId, userID }
                 });
-                if (query.length === 0) return;
 
                 return query;
             },
-            checkStateId: async (stateId) => {
+            getStatesId: async () => {
                 const query = await sequelize.query(`
                 SELECT id 
                 FROM status_type
-                WHERE id=:id`, {
+                `, {
                     type: sequelize.QueryTypes.SELECT,
-                    replacements: { id: stateId }
+                });
+
+                return query;
+            },
+
+            getPaymentsTypesId: async () => {
+                const query = await sequelize.query(`
+                SELECT id 
+                FROM payment_types`, {
+                    type: sequelize.QueryTypes.SELECT,
                 });
                 if (query.length === 0) return;
 
@@ -321,17 +340,11 @@ const db = {
             }
         },
 
-        getOrders: async (timeFilters) => {
-            let { at, before, after } = timeFilters;
-            // TODO TERMINAR SQL
+        getOrders: async ({ at, before, after }) => {
 
-            // CASE 1 : No parameter is specified ----> query current day only.
-            if (!at && !before && !after) {
-                at = new Date().toISOString().slice(0, 10);;
-            }
             const dateColumn = "date(created_at)";
             // Let's build the where condition, the result would be somethin like: WHERE created_at=at OR (created_at>=after AND created_at<=before)
-            const WHERE = `WHERE ${at ? dateColumn + "='" + at +"'": ""} ${at && (before || after) ? " OR (" : ""} ${before ? dateColumn + "<='" + before +"'" : ""} ${before && after ? " AND " : ""} ${after ? dateColumn + ">='" + after +"'" : ""} ${at && (before || after) ? ")" : ""}`
+            const WHERE = `WHERE ${at ? dateColumn + "='" + at + "'" : ""} ${at && (before || after) ? " OR (" : ""} ${before ? dateColumn + "<='" + before + "'" : ""} ${before && after ? " AND " : ""} ${after ? dateColumn + ">='" + after + "'" : ""} ${at && (before || after) ? ")" : ""}`
 
             const queryIDs = await sequelize.query(`
             SELECT id 
@@ -343,7 +356,7 @@ const db = {
             // For EACH order ... query :|... WORST METHOD... 
             const response = [];
             for (let i = 0; i < queryIDs.length; i++) {
-                const {id} = queryIDs[i];
+                const { id } = queryIDs[i];
                 response.push(await db.ordersDB.getOrder(id));
             }
             return response;
@@ -437,8 +450,7 @@ const db = {
             return order;
         },
 
-        createNewOrder: async (order) => {
-            const { userId, dishes, address, payment_type } = order;
+        createNewOrder: async ({ requestedUserId: userId, dishes, address, payment_type }) => {
             const nowTimestamp = (new Date).toISOString(); // Current timestamp
 
             let description = "";
@@ -541,7 +553,7 @@ const db = {
             return await db.ordersDB.getOrder(newOrderId);
         },
 
-        updateOrderState: async (orderID, stateId) => {
+        updateOrderState: async ({ orderId, stateId }) => {
             const nowTimestamp = (new Date).toISOString(); // Current timestamp
 
             const insertOrderState = await (async () => {
@@ -552,7 +564,7 @@ const db = {
                     VALUES (:id_status,:id_order,:timestamp)`,
                     {
                         type: sequelize.QueryTypes.INSERT,
-                        replacements: { id_status: stateId, id_order: orderID, timestamp }
+                        replacements: { id_status: stateId, id_order: orderId, timestamp }
                     });
 
                 const newID = query[0];
@@ -567,14 +579,14 @@ const db = {
                     WHERE id=:id`,
                     {
                         type: sequelize.QueryTypes.INSERT,
-                        replacements: { id_order_status: insertOrderState, updated_at: timestamp, id: orderID }
+                        replacements: { id_order_status: insertOrderState, updated_at: timestamp, id: orderId }
                     });
 
                 const newID = query[0];
                 return newID;
             })();
 
-            return await db.ordersDB.getOrder(orderID);
+            return await db.ordersDB.getOrder(orderId);
         }
     }
 }

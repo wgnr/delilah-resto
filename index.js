@@ -1,6 +1,7 @@
 /*
     MAIN ENTRY PONIT
 */
+require('dotenv').config();                 // Active .env  -> this file holds JWT passphrase
 
 // Build-in node.js libraries
 const path = require("path");
@@ -10,7 +11,6 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;      // In case PORT var is missing in env, 3000 will be used in replace.
-require('dotenv').config();                 // Active .env  -> this file holds JWT passphrase
 
 // DB connnection
 const Sequelize = require('sequelize');

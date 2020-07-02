@@ -29,7 +29,8 @@ const tokenValidatior = async (req, res, next) => {
         const is_admin = await isTypeAdmin(id_security_type);
 
         // Store results to locals http://expressjs.com/en/api.html#res.locals
-        res.locals.user = { id, is_admin };
+        res.locals.user = { id, is_admin }; // TODO SACAR
+        req.locals = res.locals; // TODO temporal
 
         // Alle gut, los gehts.
         return next();
