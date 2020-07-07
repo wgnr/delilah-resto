@@ -47,6 +47,17 @@ const db = {
 
     usersDB: {
 
+        getAllSecurityTypes: async () => {
+            const query = await sequelize.query(
+                `SELECT * 
+                FROM security_types`,
+                {
+                    type: sequelize.QueryTypes.SELECT
+                });
+
+            return query;
+        },
+
         getAllUsers: async () => {
             const userList = await sequelize.query(
                 `SELECT id,full_name,username,email,phone,address,id_security_type 
@@ -61,7 +72,7 @@ const db = {
         getUser: {
 
             byId: async (id) => {
-                const oneUser = await sequelize.query(
+                const users = await sequelize.query(
                     `SELECT id,full_name,username,email,phone,address,id_security_type 
                     FROM users 
                     WHERE id=:id`,
@@ -70,13 +81,11 @@ const db = {
                         replacements: { id }
                     });
 
-                if (oneUser.length !== 1) return;
-
-                return oneUser[0];
+                return users;
             },
 
             byUsername: async (username) => {
-                const oneUser = await sequelize.query(
+                const users = await sequelize.query(
                     `SELECT id,full_name,username,email,phone,address,id_security_type 
                     FROM users 
                     WHERE username=:username`,
@@ -85,13 +94,11 @@ const db = {
                         replacements: { username }
                     });
 
-                if (oneUser.length !== 1) return;
-
-                return oneUser[0];
+                return users;
             },
 
             byEmail: async (email) => {
-                const oneUser = await sequelize.query(
+                const users = await sequelize.query(
                     `SELECT id,full_name,username,email,phone,address,id_security_type 
                     FROM users 
                     WHERE email=:email`,
@@ -100,16 +107,11 @@ const db = {
                         replacements: { email }
                     });
 
-                if (oneUser.length !== 1) return;
-
-                return oneUser[0];
+                return users;
             }
         },
 
-        createNewUser: async (newUser) => {
-            const { address, email, full_name, password, phone, username } = newUser;
-            const id_security_type = 2;// By default asign it a user role
-
+        createNewUser: async ({ full_name, username, email, phone, address, password, id_security_type }) => {
             const insertNewUser = await sequelize.query(
                 `INSERT INTO users 
                 (full_name, username, email, password, phone, address, id_security_type) 
@@ -120,14 +122,10 @@ const db = {
                 });
 
             const newID = insertNewUser[0];
-
-
-            return await db.usersDB.getUser.byId(newID);
+            return (await db.usersDB.getUser.byId(newID))[0];
         },
 
-        updateUser: async (user) => {
-            const { id, address, email, full_name, password, phone, username, id_security_type } = user;
-
+        updateUser: async ({ id, address, email, full_name, password, phone, username, id_security_type }) => {
             const updateUser = await sequelize.query(
                 `UPDATE users 
                 SET full_name=:full_name, username=:username, email=:email, password=:password, phone=:phone, address=:address, id_security_type=:id_security_type
@@ -140,9 +138,7 @@ const db = {
             return await db.usersDB.getUser.byId(id);
         },
 
-        deleteUser: async (user) => {
-            const { id } = user;
-
+        deleteUser: async (id) => {
             const deleteUser = await sequelize.query(
                 `DELETE FROM users 
                 WHERE id=:id`,
@@ -154,9 +150,7 @@ const db = {
             return;
         },
 
-        getFavDishes: async (user) => {
-            const { id } = user;
-
+        getFavDishes: async (id) => {
             const favDishesList = await sequelize.query(
                 `SELECT dl.id AS id, name, dl.name_short AS name_short, dl.description AS description, dl.price AS price, 
                 dl.img_path AS img_path, dl.is_available AS is_available, SUM(od.quantity) AS accumulated 
@@ -207,9 +201,9 @@ const db = {
 
             return dishesList;
         },
-        getAllDishesId: async () => {
+        getAllAvailableDishes: async () => {
             const dishesList = await sequelize.query(
-                `SELECT id 
+                `SELECT * 
                 FROM dishes_list 
                 WHERE is_available=TRUE`,
                 {
@@ -229,9 +223,7 @@ const db = {
                     replacements: { id }
                 });
 
-            if (oneDish.length !== 1) return;
-
-            return oneDish[0];
+            return oneDish;
         },
 
         getDishes: async (id_arr) => {
@@ -247,8 +239,7 @@ const db = {
             return dishes;
         },
 
-        createNewDish: async (dish) => {
-            const { name, name_short, description, img_path, price, is_available } = dish;
+        createNewDish: async ({ name, name_short, description, img_path, price, is_available }) => {
             const newDish = await sequelize.query(
                 `INSERT INTO dishes_list
                 (name, name_short, price, img_path, is_available, description) 
@@ -262,9 +253,7 @@ const db = {
             return await db.dishesDB.getDish(newID);
         },
 
-        updateDish: async (dish) => {
-            const { id, name, name_short, description, img_path, price, is_available } = dish;
-
+        updateDish: async ({ id, name, name_short, description, img_path, price, is_available }) => {
             const updateDish = await sequelize.query(
                 `UPDATE dishes_list 
                 SET name=:name, name_short=:name_short, price=:price, img_path=:img_path, is_available=:is_available, description=:description
@@ -277,9 +266,7 @@ const db = {
             return await db.dishesDB.getDish(id);
         },
 
-        deleteUser: async (dish) => {
-            const { id } = dish;
-
+        deleteDish: async (id) => {
             const deleteDish = await sequelize.query(
                 `DELETE FROM dishes_list 
                 WHERE id=:id`,
@@ -293,53 +280,49 @@ const db = {
     },
 
     ordersDB: {
-        validations: {
-            checkOrderExists: async (orderId) => {
-                const query = await sequelize.query(`
-                SELECT id 
-                FROM orders
-                WHERE id=:id`, {
-                    type: sequelize.QueryTypes.SELECT,
-                    replacements: { id: orderId }
-                });
-                if (query.length === 0) return;
+        checkOrderExists: async (orderId) => {
+            const query = await sequelize.query(`
+            SELECT * 
+            FROM orders
+            WHERE id=:id`, {
+                type: sequelize.QueryTypes.SELECT,
+                replacements: { id: orderId }
+            });
+            return query;
+        },
+        checkOrderBelongsToUser: async ({ orderId, userID }) => {
+            const query = await sequelize.query(`
+            SELECT * 
+            FROM orders
+            WHERE id=:orderId and id_user=:userID`, {
+                type: sequelize.QueryTypes.SELECT,
+                replacements: { orderId, userID }
+            });
 
-                return query;
-            },
-            checkOrderBelongsToUser: async ({ orderId, userID }) => {
-                const query = await sequelize.query(`
-                SELECT id 
-                FROM orders
-                WHERE id=:orderId and id_user=:userID`, {
-                    type: sequelize.QueryTypes.SELECT,
-                    replacements: { orderId, userID }
-                });
-
-                return query;
-            },
-            getStatesId: async () => {
-                const query = await sequelize.query(`
-                SELECT id 
-                FROM status_type
-                `, {
-                    type: sequelize.QueryTypes.SELECT,
-                });
-
-                return query;
-            },
-
-            getPaymentsTypesId: async () => {
-                const query = await sequelize.query(`
-                SELECT id 
-                FROM payment_types`, {
-                    type: sequelize.QueryTypes.SELECT,
-                });
-                if (query.length === 0) return;
-
-                return query;
-            }
+            return query;
         },
 
+
+        getAllStatusTypes: async () => {
+            const query = await sequelize.query(`
+                SELECT * 
+                FROM status_type
+                `, {
+                type: sequelize.QueryTypes.SELECT,
+            });
+
+            return query;
+        },
+
+
+        getPaymentsTypes: async () => {
+            const query = await sequelize.query(`
+            SELECT * 
+            FROM payment_types`, {
+                type: sequelize.QueryTypes.SELECT,
+            });
+            return query;
+        },
         getOrders: async ({ at, before, after }) => {
 
             const dateColumn = "date(created_at)";

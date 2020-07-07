@@ -12,8 +12,9 @@ const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewa
 // Connect 2 db.
 const { ordersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
+
 // Orders own validation rules. All of them try to avoid to insert invalid data in the DB.
-const { checkErrorMessages, ordersValidation } = require(path.join(__dirname, "controller", "controller.js"));
+const { checkErrorMessages, ordersVal } = require(path.join(__dirname, "controller", "controller.js"));
 
 
 /* PATHS */
@@ -32,7 +33,7 @@ Date must be ISO YYYY-MM-DD
 router.get("/",
     tokenValidator,
     adminAccessOnly,
-    ordersValidation.checkQueryTimeFilters,
+    ordersVal.checkQueryTimeFilters,
     checkErrorMessages,
     async (req, res) => {
         const { at, before, after } = req.query;
@@ -43,7 +44,7 @@ router.get("/",
 // Create a new order
 router.post("/",
     tokenValidator,
-    ordersValidation.checkBodyNewOrder,
+    ordersVal.checkBodyNewOrder,
     checkErrorMessages,
     async (req, res) => {
         const { dishes, address, payment_type } = req.body;
@@ -61,8 +62,8 @@ router.post("/",
 // Return order status USER
 router.get("/:id",
     tokenValidator,
-    ordersValidation.checkParamOrderId,
-    ordersValidation.checkOwnUserData,
+    ordersVal.checkParamOrderId,
+    ordersVal.checkOwnUserData,
     checkErrorMessages,
     async (req, res) => {
         let { id } = req.params;
@@ -74,8 +75,8 @@ router.get("/:id",
 router.put("/:id",
     tokenValidator,
     adminAccessOnly,
-    ordersValidation.checkParamOrderId,
-    ordersValidation.checkQueryState,
+    ordersVal.checkParamOrderId,
+    ordersVal.checkQueryState,
     checkErrorMessages,
     async (req, res) => {
         const { id: orderId } = req.params;
