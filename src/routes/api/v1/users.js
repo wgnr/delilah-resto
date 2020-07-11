@@ -12,7 +12,7 @@ const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewa
 // Connect 2 db.
 const { usersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
-const { checkErrorMessages, usersVal } = require(path.join(__dirname, "controller", "controller.js"));
+const { checkErrorMessages, usersVal } = require(path.join(__dirname, "controller", "index"));
 
 
 // Returns all info of user

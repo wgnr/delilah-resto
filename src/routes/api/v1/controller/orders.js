@@ -2,7 +2,7 @@ const path = require("path");
 const { ordersDB, dishesDB } = require(path.join(__dirname, "..", "..", "..", "..", "db", "db.js"));
 
 const { checkSchema } = require('express-validator');
-
+const moment = require('moment');
 // Gets a date with YYYY-MM-DD format.
 const formatDateToYYYYMMDD = date => date.toISOString().slice(0, 10);
 
@@ -14,7 +14,8 @@ const checkQueryTimeFilters = [
                 options: (at, { req }) => {
                     const { before, after } = req.query;
                     if (!at && !before && !after) {
-                        return formatDateToYYYYMMDD(new Date());
+                        // If nothing was entered, then query today's orders.
+                        return moment(); // Today's day
                     }
                     return at; // If nothing is done, return it as original.
                 }
@@ -29,7 +30,7 @@ const checkQueryTimeFilters = [
             errorMessage: 'Date param must be ISO format YYYY-MM-DD.',
             toDate: true,
             customSanitizer: {
-                options: date => formatDateToYYYYMMDD(date)
+                options: date => moment(date)
             }
         },
         after: {
@@ -39,7 +40,7 @@ const checkQueryTimeFilters = [
             errorMessage: 'Date param must be ISO format YYYY-MM-DD.',
             toDate: true,
             customSanitizer: {
-                options: date => formatDateToYYYYMMDD(date)
+                options: date => moment(date)
             }
         },
         at: {
@@ -49,7 +50,7 @@ const checkQueryTimeFilters = [
             errorMessage: 'Date param must be ISO format YYYY-MM-DD.',
             toDate: true,
             customSanitizer: {
-                options: date => formatDateToYYYYMMDD(date)
+                options: date => moment(date)
             }
         }
     })
@@ -191,9 +192,9 @@ const checkQueryState = checkSchema({
 
 
 module.exports = {
-    checkQueryTimeFilters,
     checkBodyNewOrder,
-    checkParamOrderId,
     checkOwnUserData,
+    checkParamOrderId,
     checkQueryState,
+    checkQueryTimeFilters
 };

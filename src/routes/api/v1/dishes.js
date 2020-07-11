@@ -14,7 +14,7 @@ const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js
 
 
 // Dishes own validation rules. All of them try to avoid to insert invalid data in the DB.
-const { checkErrorMessages, dishesVal } = require(path.join(__dirname, "controller", "controller.js"));
+const { checkErrorMessages, dishesVal } = require(path.join(__dirname, "controller", "index"));
 
 
 // List all dishes

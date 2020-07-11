@@ -86,7 +86,7 @@ const checkParamDishId = checkSchema({
         toInt: true,
         custom: {
             options: async (id) => {
-                // Check if payment type is valid.
+                // Check if dish id is valid
                 const validIds = await dishesDB.getAllAvailableDishesId();
                 const validIdsArr = validIds.map(obj => obj.id);
 

@@ -27,7 +27,6 @@ const checkBodyUser = checkSchema({
                 max: 64
             }
         },
-        // escape: true,    // TODO What about SQL injection?
         custom: {
             options: async (username) => {
                 const validIds = await usersDB.getUser.byUsername(username);
@@ -129,6 +128,6 @@ const checkOwnUserData = checkSchema({
 
 module.exports = {
     checkBodyUser,
-    checkParamIdUser,
-    checkOwnUserData
+    checkOwnUserData,
+    checkParamIdUser
 };

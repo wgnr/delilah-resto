@@ -68,3 +68,4 @@ All you need to try this was explained ✔. Have fun!
 - [dotenv](https://www.npmjs.com/package/dotenv) : Used to protect JWT passphrase. 
 - [Sequelize](https://www.npmjs.com/package/sequelize) : ORM for MySQL connection and querying.
 - [mysql2](https://www.npmjs.com/package/mysql2) : MySQL client for nodejs. Integrated in Sequelize.
+- [moment](https://www.npmjs.com/package/moment) : For easily parsing and formatting dates.

@@ -1,5 +1,5 @@
-const ordersVal = require('./orders');
 const dishesVal = require('./dishes');
+const ordersVal = require('./orders');
 const usersVal = require('./users');
 
 const { validationResult } = require('express-validator');
@@ -14,7 +14,7 @@ const checkErrorMessages = (req, res, next) => {
 
 module.exports = {
     checkErrorMessages,
-    ordersVal,
     dishesVal,
+    ordersVal,
     usersVal
 }

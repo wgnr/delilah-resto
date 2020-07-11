@@ -47,3 +47,12 @@ module.exports = { sequelize };
 app.listen(PORT, () => {
     console.log(`${new Date().toLocaleString()} -- Server is up and listening to port ${PORT}`)
 });
+
+
+// Generic error
+app.use((err, req, res, next) => {
+    if (!err) return next();
+    console.log("An error has occurred", err);
+    res.status(500).json(err.message);
+    throw err;
+});

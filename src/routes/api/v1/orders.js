@@ -14,7 +14,7 @@ const { ordersDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js
 
 
 // Orders own validation rules. All of them try to avoid to insert invalid data in the DB.
-const { checkErrorMessages, ordersVal } = require(path.join(__dirname, "controller", "controller.js"));
+const { checkErrorMessages, ordersVal } = require(path.join(__dirname, "controller", "index"));
 
 
 /* PATHS */
