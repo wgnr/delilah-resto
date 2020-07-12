@@ -17,17 +17,17 @@ async function populateBasicInfo() {
             name: 'Chiken Hamburger',
             name_short: 'ChHm',
             price: 25.25,
-            img_path: './src/img/pollo.png',
+            img_path: './src/img/chickenham.png',
             is_available: true,
-            description: 'Pollo frito del piolardo'
+            description: 'A very tasty hamburger!'
         },
         {
-            name: 'Carne',
-            name_short: 'Ca',
+            name: 'Hotdog',
+            name_short: 'Hd',
             price: 11.77,
             img_path: './src/img/carne.png',
             is_available: true,
-            description: 'Carne frita del piolardo'
+            description: 'A hotdog with tons of mustard!'
         }
     ]);
 
@@ -83,9 +83,9 @@ async function populateBasicInfo() {
     await User.bulkCreate([
         {
             full_name: 'Juan Wagner',
-            username: 'JW',
+            username: 'admin',
             email: 'juanswagner@asdads.com',
-            password: '123',
+            password: 'admin',
             phone: '+5493455559542',
             address: 'Ocampo 918',
             SecurityTypeId: (await SecurityType.findOne({ where: { type: 'admin' } })).get('id')

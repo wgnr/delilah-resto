@@ -9,7 +9,7 @@ const {
     PaymentType,
     StatusType,
     User,
-} = require("../../../../services/database/model");
+} = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model'));
 const moment = require('moment');
 
 const checkQueryTimeFilters = [
@@ -459,10 +459,6 @@ const updateStatus = async (req, res) => {
     await order.save();
 
     return res.status(200).json(await getOneOrder(orderId));
-
-
-
-
 };
 
 module.exports = {

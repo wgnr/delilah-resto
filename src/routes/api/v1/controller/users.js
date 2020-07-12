@@ -1,10 +1,9 @@
-const path = require("path");
-
+const path = require('path');
 const {
     SecurityType,
     User,
-} = require('../../../../services/database/model/index');
-const { sequelize } = require('../../../../services/database/index');
+} = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model', 'index'));
+const { sequelize } = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'index'));
 
 const { checkSchema } = require('express-validator');
 
@@ -34,7 +33,6 @@ const checkBodyUser = checkSchema({
         },
         custom: {
             options: async (username) => {
-                // const validIds = await usersDB.getUser.byUsername(username);
                 const validInfo = await User.findOne({ where: { username } });
                 if (validInfo !== null)
                     return Promise.reject(`Username ${username} has been already taken.`);
@@ -49,8 +47,6 @@ const checkBodyUser = checkSchema({
             options: async (email) => {
                 const validInfo = await User.findOne({ where: { email } });
                 if (validInfo !== null)
-                    // const validIds = await usersDB.getUser.byEmail(email);
-                    // if (validIds.length !== 0)
                     return Promise.reject(`Email ${email} has been already registered.`);
             }
         }
@@ -88,14 +84,9 @@ const checkBodyUser = checkSchema({
         toInt: true,
         custom: {
             options: async (securityTypeId, { req }) => {
-                // Only an admin can change security type //TODO
+                // Only an admin can change security type
                 if (!req.locals.user.is_admin) return 'Only admins can change security types.';
 
-
-                // const validIds = await usersDB.getAllSecurityTypes();
-                // const validIdsArr = validIds.map(obj => obj.id);
-
-                // if (!validIdsArr.includes(id_security_type))
                 const validInfo = await SecurityType.findByPk(securityTypeId);
                 if (validInfo === null)
                     return Promise.reject('Security type is invalid type is invalid.');
@@ -112,8 +103,6 @@ const checkParamIdUser = checkSchema({
         toInt: true,
         custom: {
             options: async (id) => {
-                // const result = await usersDB.getUser.byId(id);
-                // if (result.length === 0)
                 const validInfo = await User.findByPk(id);
                 if (validInfo === null)
                     return Promise.reject(`User Id doesn't exist.`);
@@ -182,8 +171,6 @@ const getUser = async id => {
 }
 
 const updateUser = async (req, res) => {
-    // TODO QUE TAL SI ESTA FORMA LA HACEMOS ALGO ASI?
-    // FIJARME SI HAGO UN EMAIL = EMAIL || ANTERIOR.EMAIL
     const { id } = req.params;
     const {
         address,
@@ -195,7 +182,7 @@ const updateUser = async (req, res) => {
         username,
     } = req.body;
 
-    const user = await User.update(
+    await User.update(
         {
             address,
             email,

@@ -7,7 +7,7 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "populateData": "node index.js --populateData"
+    "populateData": "node .\\src\\services\\database\\model\\index.js --populateData"
   },
   "repository": {
     "type": "git",

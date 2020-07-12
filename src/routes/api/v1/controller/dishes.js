@@ -1,8 +1,6 @@
 const path = require("path");
-// const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "..", "db", "db.js"));
-
 const { checkSchema } = require('express-validator');
-const { DishesList } = require("../../../../services/database/model");
+const { DishesList } = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model'));
 
 
 const checkBodyDish = checkSchema({
@@ -17,7 +15,6 @@ const checkBodyDish = checkSchema({
                 max: 256
             }
         },
-        escape: true,
         trim: true,
     },
     name_short: {
@@ -31,7 +28,6 @@ const checkBodyDish = checkSchema({
                 max: 32
             }
         },
-        escape: true,
         trim: true,
     },
     description: {
@@ -44,7 +40,6 @@ const checkBodyDish = checkSchema({
                 max: 512
             }
         },
-        escape: true,
         trim: true,
     },
     img_path: {
@@ -127,42 +122,29 @@ const getDish = async (req, res) => {
 const updateDish = async (req, res) => {
     const { id } = req.params;
 
-    const { name, name_short,
-        description = originalDish.description,
-        img_path = originalDish.img_path,
-        price, is_available } = req.body;
+    const {
+        description,
+        img_path,
+        is_available,
+        name_short,
+        name,
+        price,
+    } = req.body;
 
+    await DishesList.update(
+        {
+            description,
+            img_path,
+            is_available,
+            name_short,
+            name,
+            price,
+        },
+        { where: { id } }
+    );
 
-    // TODO VER QUE FORMA ME CONVIENE PARA GUARDAR LAS COSAS
-    // PENSANDO EN LA SITUACION QUE YO AL JSON LE PASO POCAS COSAS...
-
-
-
-
-
-
-    // const originalDish = (await dishesDB.getDish(id))[0];
-
-    // const { name, name_short,
-    //     description = originalDish.description,
-    //     img_path = originalDish.img_path,
-    //     price, is_available } = req.body;
-
-
-    // const updatedDish = {}; //TODO CHECKEAR QUE ESTO ME MODIFIQUE BIEN LA DATITA.
-    // updatedDish.id = id;
-    // updatedDish.name = name || originalDish.name;
-    // updatedDish.name_short = name_short || originalDish.name_short;
-    // updatedDish.description = description || originalDish.description;
-    // updatedDish.img_path = img_path || originalDish.img_path;
-    // updatedDish.price = price || originalDish.price;
-    // updatedDish.is_available = is_available || originalDish.is_available;
-
-    // return res.status(200).json(
-    //     (await dishesDB.updateDish(
-    //         updatedDish
-    //     ))[0]
-    // );
+    const dish = await DishesList.findByPk(id);
+    return res.status(200).json(dish);
 };
 
 const deleteDish = async (req, res) => {

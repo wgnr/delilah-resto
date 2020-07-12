@@ -1,4 +1,5 @@
-const { sequelize } = require('../index');
+const path = require('path');
+const { sequelize } = require(path.join(__dirname, '..', 'index.js'));
 const { DataTypes } = require('sequelize');
 
 const OrderDish = sequelize.define(

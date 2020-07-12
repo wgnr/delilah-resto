@@ -5,11 +5,6 @@ const path = require("path");
 const express = require("express");
 const router = express.Router();
 
-// Connect 2 db.
-const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
-
-
-// Dishes own validation rules. All of them try to avoid to insert invalid data in the DB.
 const { checkErrorMessages, dishesCtrl, authCtrl } = require(path.join(__dirname, "controller", "index"));
 
 

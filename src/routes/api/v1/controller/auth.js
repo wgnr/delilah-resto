@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 const path = require("path");
-const { User, SecurityType } = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model', 'index'));
+const {
+    SecurityType,
+    User,
+} = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model', 'index'));
 const { checkSchema } = require('express-validator');
 
 // JWT Authentication
@@ -64,8 +67,8 @@ const validateToken = async (req, res, next) => {
         const is_admin = search ? true : false;
 
         // Store results to locals http://expressjs.com/en/api.html#res.locals
-        res.locals.user = { id, is_admin }; // TODO SACAR
-        req.locals = res.locals; // TODO temporal
+        res.locals.user = { id, is_admin };
+        req.locals = res.locals; // Used in some validators.
 
         // Alle gut, los gehts.
         return next();
