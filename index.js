@@ -13,8 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;      // In case PORT var is missing in env, 3000 will be used in replace.
 
 // DB connnection
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize("mysql://root:@127.0.0.1:3306/delilah-resto");
+// const Sequelize = require('sequelize');
+// const sequelize = new Sequelize("mysql://root:@127.0.0.1:3306/delilah-resto");
+const { sequelize } = require('./src/services/database/index');
 
 // Check whether server could connect
 sequelize.authenticate()

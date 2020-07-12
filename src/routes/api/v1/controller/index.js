@@ -1,6 +1,7 @@
-const dishesVal = require('./dishes');
-const ordersVal = require('./orders');
-const usersVal = require('./users');
+const authCtrl = require('./auth');
+const dishesCtrl = require('./dishes');
+const ordersCtrl = require('./orders');
+const usersCtrl = require('./users');
 
 const { validationResult } = require('express-validator');
 const checkErrorMessages = (req, res, next) => {
@@ -13,8 +14,9 @@ const checkErrorMessages = (req, res, next) => {
 };
 
 module.exports = {
+    authCtrl,
     checkErrorMessages,
-    dishesVal,
-    ordersVal,
-    usersVal
+    dishesCtrl,
+    ordersCtrl,
+    usersCtrl,
 }

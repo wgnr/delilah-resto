@@ -5,96 +5,62 @@ const path = require("path");
 const express = require("express");
 const router = express.Router();
 
-// Middlewares
-const tokenValidator = require(path.join(__dirname, "..", "..", "..", "middlewares", "tokenValidator.js"));
-const adminAccessOnly = require(path.join(__dirname, "..", "..", "..", "middlewares", "adminAccessOnly.js"));
-
 // Connect 2 db.
 const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
 
 
 // Dishes own validation rules. All of them try to avoid to insert invalid data in the DB.
-const { checkErrorMessages, dishesVal } = require(path.join(__dirname, "controller", "index"));
+const { checkErrorMessages, dishesCtrl, authCtrl } = require(path.join(__dirname, "controller", "index"));
 
 
 // List all dishes
 router.get("/",
-    tokenValidator,
-    async (req, res) => res.status(201).json(await dishesDB.getAllDishes())
+    authCtrl.validateToken,
+    dishesCtrl.getAllDishes
 );
 
 // Create a plate
 router.post("/",
-    tokenValidator,
-    adminAccessOnly,
-    dishesVal.checkBodyDish,
-    checkErrorMessages,
-    async (req, res) => {
-        const { name, name_short, description = '', img_path = '', price, is_available } = req.body;
-        return res.status(201).json(
-            (await dishesDB.createNewDish(
-                { name, name_short, description, img_path, price, is_available }
-            ))[0]
-        );
-    }
+    authCtrl.validateToken,
+    authCtrl.adminAccessOnly,
+    [
+        dishesCtrl.checkBodyDish,
+        checkErrorMessages
+    ],
+    dishesCtrl.createNewDish
 );
 
-// List all dishes
+// Get dish info
 router.get("/:id",
-    tokenValidator,
-    dishesVal.checkParamDishId,
-    checkErrorMessages,
-    async (req, res) => {
-        const { id } = req.params;
-        return res.status(200).json((await dishesDB.getDish(id))[0]);
-    }
+    authCtrl.validateToken,
+    [
+        dishesCtrl.checkParamDishId,
+        checkErrorMessages
+    ],
+    dishesCtrl.getDish
 );
 
 // Modify the plate
 router.put("/:id",
-    tokenValidator,
-    adminAccessOnly,
-    dishesVal.checkParamDishId,
-    dishesVal.checkBodyDish,
-    checkErrorMessages,
-    async (req, res) => {
-        const { id } = req.params;
-        const originalDish = (await dishesDB.getDish(id))[0];
-
-        const { name, name_short,
-            description = originalDish.description,
-            img_path = originalDish.img_path,
-            price, is_available } = req.body;
-
-
-        const updatedDish = {}; //TODO CHECKEAR QUE ESTO ME MODIFIQUE BIEN LA DATITA.
-        updatedDish.id = id;
-        updatedDish.name = name || originalDish.name;
-        updatedDish.name_short = name_short || originalDish.name_short;
-        updatedDish.description = description || originalDish.description;
-        updatedDish.img_path = img_path || originalDish.img_path;
-        updatedDish.price = price || originalDish.price;
-        updatedDish.is_available = is_available || originalDish.is_available;
-
-        return res.status(200).json(
-            (await dishesDB.updateDish(
-                updatedDish
-            ))[0]
-        );
-    }
+    authCtrl.validateToken,
+    authCtrl.adminAccessOnly,
+    [
+        dishesCtrl.checkParamDishId,
+        dishesCtrl.checkBodyDish,
+        checkErrorMessages
+    ],
+    dishesCtrl.updateDish
 );
 
-// Delete a plate
+// Delete plate
 router.delete("/:id",
-    tokenValidator,
-    adminAccessOnly,
-    dishesVal.checkParamDishId,
-    checkErrorMessages,
-    async (req, res) => {
-        const { id } = req.params;
-        await dishesDB.deleteDish(id);
-        return res.sendStatus(204);
-    }
+    authCtrl.validateToken,
+    authCtrl.adminAccessOnly,
+    [
+        dishesCtrl.checkParamDishId,
+        checkErrorMessages
+    ],
+    dishesCtrl.deleteDish
 );
 
 module.exports = router;

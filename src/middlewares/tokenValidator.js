@@ -4,7 +4,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 
 // DB Methods
-const { isTypeAdmin } = require(path.join(__dirname, "..", "db", "db.js"));
+// const { isTypeAdmin } = require(path.join(__dirname, "..", "db", "db.js"));
 
 
 /*
@@ -39,5 +39,10 @@ const tokenValidatior = async (req, res, next) => {
     }
 };
 
+async function isTypeAdmin(securityTypeId) {
+    const { SecurityType } = require('../services/database/model/index');
+    const search = await SecurityType.findByPk(securityTypeId, { where: { type: 'admin' } });
+    return search ? true : false;
+}
 
 module.exports = tokenValidatior;

@@ -5,30 +5,14 @@ const path = require("path");
 const express = require("express");
 const router = express.Router();
 
-// JWT Authentication
-const jwt = require("jsonwebtoken");
+const { authCtrl, checkErrorMessages } = require(path.join(__dirname, 'controller', 'index'));
 
-// Connect 2 db.
-const { loginAuth } = require(path.join(__dirname, "..", "..", "..", "db", "db.js"));
-
-// Get token containing user's ID
-router.get("/", async (req, res) => {
-    // Gets parameters from query
-    const { username, password } = req.query;
-
-    // Any missing information retuns an error.
-    if (!username || !password) return res.sendStatus(401);
-
-    // Validate provided information
-    const { id, id_security_type } = await loginAuth(username, password);
-
-    // Check whether id was found
-    if (!id || !id_security_type) return res.sendStatus(401);
-
-    // Generate token
-    const token = jwt.sign({ id, id_security_type }, process.env.JWT_PASSPHRASE);       // PASSPHRASE is declared in the file .env
-
-    return res.status(200).json({ token });
-});
+// Get token containing user's ID and securityType ID
+router.get("/",
+    authCtrl.checkQueryParams,
+    checkErrorMessages,
+    authCtrl.getUser,
+    authCtrl.getToken
+);
 
 module.exports = router;

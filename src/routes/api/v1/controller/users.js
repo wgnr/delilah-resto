@@ -1,5 +1,10 @@
 const path = require("path");
-const { usersDB } = require(path.join(__dirname, "..", "..", "..", "..", "db", "db.js"));
+
+const {
+    SecurityType,
+    User,
+} = require('../../../../services/database/model/index');
+const { sequelize } = require('../../../../services/database/index');
 
 const { checkSchema } = require('express-validator');
 
@@ -29,8 +34,9 @@ const checkBodyUser = checkSchema({
         },
         custom: {
             options: async (username) => {
-                const validIds = await usersDB.getUser.byUsername(username);
-                if (validIds.length !== 0)
+                // const validIds = await usersDB.getUser.byUsername(username);
+                const validInfo = await User.findOne({ where: { username } });
+                if (validInfo !== null)
                     return Promise.reject(`Username ${username} has been already taken.`);
             }
         }
@@ -41,8 +47,10 @@ const checkBodyUser = checkSchema({
         isEmail: true,
         custom: {
             options: async (email) => {
-                const validIds = await usersDB.getUser.byEmail(email);
-                if (validIds.length !== 0)
+                const validInfo = await User.findOne({ where: { email } });
+                if (validInfo !== null)
+                    // const validIds = await usersDB.getUser.byEmail(email);
+                    // if (validIds.length !== 0)
                     return Promise.reject(`Email ${email} has been already registered.`);
             }
         }
@@ -79,15 +87,17 @@ const checkBodyUser = checkSchema({
         isInt: true,
         toInt: true,
         custom: {
-            options: async (id_security_type, { req }) => {
+            options: async (securityTypeId, { req }) => {
                 // Only an admin can change security type //TODO
                 if (!req.locals.user.is_admin) return 'Only admins can change security types.';
 
 
-                const validIds = await usersDB.getAllSecurityTypes();
-                const validIdsArr = validIds.map(obj => obj.id);
+                // const validIds = await usersDB.getAllSecurityTypes();
+                // const validIdsArr = validIds.map(obj => obj.id);
 
-                if (!validIdsArr.includes(id_security_type))
+                // if (!validIdsArr.includes(id_security_type))
+                const validInfo = await SecurityType.findByPk(securityTypeId);
+                if (validInfo === null)
                     return Promise.reject('Security type is invalid type is invalid.');
             }
         }
@@ -102,8 +112,10 @@ const checkParamIdUser = checkSchema({
         toInt: true,
         custom: {
             options: async (id) => {
-                const result = await usersDB.getUser.byId(id);
-                if (result.length === 0)
+                // const result = await usersDB.getUser.byId(id);
+                // if (result.length === 0)
+                const validInfo = await User.findByPk(id);
+                if (validInfo === null)
                     return Promise.reject(`User Id doesn't exist.`);
             }
         }
@@ -126,8 +138,132 @@ const checkOwnUserData = checkSchema({
     }
 });
 
+const getAllUsers = async (req, res) => {
+    const users = await User.findAll({
+        attributes: {
+            exclude: ['password']
+        }
+    });
+
+    return res.status(201).json(users);
+};
+
+const createNewUser = async (req, res) => {
+    const { full_name, username, email, phone, address, password } = req.body;
+
+    const user = await User.create({
+        address,
+        email,
+        full_name,
+        password,
+        phone,
+        username,
+        SecurityTypeId: (await SecurityType.findOne({ where: { type: 'user' } })).get('id')
+    });
+
+    // Remove password
+    const response = user.toJSON();
+    delete response.password
+
+    return res.status(201).json(response);
+};
+
+const getOneUser = async (req, res) => {
+    const { id } = req.params;
+    return res.status(200).json(await getUser(id));
+};
+
+const getUser = async id => {
+    return await User.findByPk(id, {
+        attributes: {
+            exclude: ['password']
+        }
+    });
+}
+
+const updateUser = async (req, res) => {
+    // TODO QUE TAL SI ESTA FORMA LA HACEMOS ALGO ASI?
+    // FIJARME SI HAGO UN EMAIL = EMAIL || ANTERIOR.EMAIL
+    const { id } = req.params;
+    const {
+        address,
+        email,
+        full_name,
+        password,
+        phone,
+        securityTypeId,
+        username,
+    } = req.body;
+
+    const user = await User.update(
+        {
+            address,
+            email,
+            full_name,
+            password,
+            phone,
+            securityTypeId,
+            username,
+        },
+        { where: { id } }
+    );
+
+    return res.status(200).json(await getUser(id));
+};
+
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    await User.destroy({ where: { id } });
+    return res.sendStatus(204);
+};
+
+const getFavouriteDishes = async (req, res) => {
+    const { id } = req.params;
+
+    const favDishesList = await sequelize.query(
+        `SELECT dl.id AS id, name, dl.name_short AS name_short, dl.description AS description, dl.price AS price, 
+        dl.img_path AS img_path, dl.is_available AS is_available, SUM(od.quantity) AS accumulated 
+        FROM orderdishes AS od 
+        INNER JOIN disheslists AS dl 
+        ON od.DishesListId=dl.id 
+        WHERE od.OrderId IN (
+            SELECT id
+            FROM Orders 
+            WHERE OrderId=:id
+        )
+        GROUP BY od.DishesListId
+        ORDER BY accumulated DESC, price DESC, name ASC`,
+        {
+            type: sequelize.QueryTypes.SELECT,
+            replacements: { id }
+        });
+
+    const favDishes = favDishesList.map(d => {
+        return {
+            dish: {
+                id: d.id,
+                name: d.name,
+                name_short: d.name_short,
+                description: d.description,
+                price: d.price,
+                img_path: d.img_path,
+                is_available: d.is_available
+            },
+            accumulated: d.accumulated
+        }
+    });
+
+    return res.status(200).json(favDishes);
+}
+
 module.exports = {
     checkBodyUser,
     checkOwnUserData,
-    checkParamIdUser
+    checkParamIdUser,
+    createNewUser,
+    deleteUser,
+    getAllUsers,
+    getFavouriteDishes,
+    getOneUser,
+    updateUser,
 };

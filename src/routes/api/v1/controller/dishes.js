@@ -1,7 +1,8 @@
 const path = require("path");
-const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "..", "db", "db.js"));
+// const { dishesDB } = require(path.join(__dirname, "..", "..", "..", "..", "db", "db.js"));
 
 const { checkSchema } = require('express-validator');
+const { DishesList } = require("../../../../services/database/model");
 
 
 const checkBodyDish = checkSchema({
@@ -49,10 +50,6 @@ const checkBodyDish = checkSchema({
     img_path: {
         in: 'body',
         optional: true,
-        // matches: { // Here I check wheter the expresion is a valid path.
-        //     options: [REGEX_EXPRESSION],
-        //     errorMessage: 'path should be relative path'
-        // }
     },
     price: {
         in: 'body',
@@ -77,7 +74,7 @@ const checkBodyDish = checkSchema({
 
 const checkParamDishId = checkSchema({
     id: {
-        in: 'body',
+        in: 'params',
         optional: false,
         isInt: {
             options: { gt: 0 },
@@ -86,18 +83,100 @@ const checkParamDishId = checkSchema({
         toInt: true,
         custom: {
             options: async (id) => {
-                // Check if dish id is valid
-                const validIds = await dishesDB.getAllAvailableDishesId();
-                const validIdsArr = validIds.map(obj => obj.id);
-
-                if (!validIdsArr.includes(id))
+                const validInfo = await DishesList.findByPk(id);
+                if (validInfo === null)
                     return Promise.reject('Dish ID is invalid.');
             }
         }
     }
 });
 
+const getAllDishes = async (req, res) => {
+    const dishes = await DishesList.findAll();
+    res.status(201).json(dishes);
+}
+
+const createNewDish = async (req, res) => {
+    const {
+        description,
+        img_path,
+        is_available,
+        name_short,
+        name,
+        price,
+    } = req.body;
+
+    const dish = await DishesList.create({
+        description,
+        img_path,
+        is_available,
+        name_short,
+        name,
+        price,
+    });
+
+    return res.status(201).json(dish);
+}
+
+const getDish = async (req, res) => {
+    const { id } = req.params;
+    const dish = await DishesList.findByPk(id);
+    return res.status(200).json(dish);
+};
+
+const updateDish = async (req, res) => {
+    const { id } = req.params;
+
+    const { name, name_short,
+        description = originalDish.description,
+        img_path = originalDish.img_path,
+        price, is_available } = req.body;
+
+
+    // TODO VER QUE FORMA ME CONVIENE PARA GUARDAR LAS COSAS
+    // PENSANDO EN LA SITUACION QUE YO AL JSON LE PASO POCAS COSAS...
+
+
+
+
+
+
+    // const originalDish = (await dishesDB.getDish(id))[0];
+
+    // const { name, name_short,
+    //     description = originalDish.description,
+    //     img_path = originalDish.img_path,
+    //     price, is_available } = req.body;
+
+
+    // const updatedDish = {}; //TODO CHECKEAR QUE ESTO ME MODIFIQUE BIEN LA DATITA.
+    // updatedDish.id = id;
+    // updatedDish.name = name || originalDish.name;
+    // updatedDish.name_short = name_short || originalDish.name_short;
+    // updatedDish.description = description || originalDish.description;
+    // updatedDish.img_path = img_path || originalDish.img_path;
+    // updatedDish.price = price || originalDish.price;
+    // updatedDish.is_available = is_available || originalDish.is_available;
+
+    // return res.status(200).json(
+    //     (await dishesDB.updateDish(
+    //         updatedDish
+    //     ))[0]
+    // );
+};
+
+const deleteDish = async (req, res) => {
+    const { id } = req.params;
+    await DishesList.destroy({ where: { id } });
+    return res.sendStatus(204);
+}
+
 module.exports = {
     checkBodyDish,
-    checkParamDishId
+    checkParamDishId,
+    createNewDish,
+    deleteDish,
+    getAllDishes,
+    getDish,
+    updateDish,
 }
