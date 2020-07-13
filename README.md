@@ -8,7 +8,7 @@ The goal of this proyect is to build an API REST to manage a food store's orders
 - CRUD Dishes methods
 - CRUD Orders methods
 - Request's body ad params validation
-- User's favorites dishes method.
+- User's favourites dishes endpoint.
 
 ## How to try it
 ### 1. Server init
