@@ -178,13 +178,14 @@ const checkOwnUserData = checkSchema({
                 const orderId = id;
                 const userID = req.locals.user.id;
 
-                const validInfo = await Order.findByPk(orderId, {
+                const validInfo = await Order.findOne({
                     where: {
-                        UserId: userID
+                        id: orderId, // TODO CHECKEAR ANDA BIEN
+                        UserId: userID,
                     }
                 });
                 if (validInfo === null)
-                    return `The user is trying to access to other user's order info.`;
+                    return Promise.reject(`The user is trying to access to other user's order info.`);
             }
         }
     }
@@ -345,7 +346,6 @@ const createNewOrder = async (req, res) => {
 
     // Count how many order where created today and add one
     const today = moment().startOf('day');
-    console.log(today);
     const alreadyOrderedToday = await Order.count({
         where:
             { createdAt: { [Op.gte]: today } }
@@ -461,6 +461,12 @@ const updateStatus = async (req, res) => {
     return res.status(200).json(await getOneOrder(orderId));
 };
 
+const deleteOrder = async (req, res) => {
+    const { id } = req.params;
+    await Order.destroy({ where: { id } });
+    return res.sendStatus(204);
+};
+
 module.exports = {
     checkBodyNewOrder,
     checkOwnUserData,
@@ -468,6 +474,7 @@ module.exports = {
     checkQueryState,
     checkQueryTimeFilters,
     createNewOrder,
+    deleteOrder,
     getOrder,
     getOrders,
     updateStatus,

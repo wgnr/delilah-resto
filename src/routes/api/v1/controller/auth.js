@@ -42,12 +42,12 @@ const getUser = async (req, res, next) => {
 };
 
 const getToken = async (req, res) => {
-    const { id, SecurityTypeId } = res.locals.user;
+    const { id } = res.locals.user;
 
-    if (!id || !SecurityTypeId) return res.sendStatus(401);
+    if (!id) return res.sendStatus(401);
 
     // Generate token
-    const token = jwt.sign({ id, SecurityTypeId }, process.env.JWT_PASSPHRASE);       // PASSPHRASE is declared in the file .env
+    const token = jwt.sign({ id }, process.env.JWT_PASSPHRASE);       // PASSPHRASE is declared in the file .env
 
     return res.status(200).json({ token });
 }
@@ -59,12 +59,17 @@ const validateToken = async (req, res, next) => {
         if (bearer !== "Bearer") return res.status(401).send("Expected Bearer");
 
         // Check whether token is valid
-        const { id, SecurityTypeId } = jwt.verify(token, process.env.JWT_PASSPHRASE);     // PASSPHRASE is declared in the file .env
-        if (!id || !SecurityTypeId) return res.status(401).send("id or SecurityTypeId missing in token");
+        const { id } = jwt.verify(token, process.env.JWT_PASSPHRASE);     // PASSPHRASE is declared in the file .env
+        if (!id) return res.status(401).send("id missing in token");
 
         // Check if id is admin
-        const search = await SecurityType.findByPk(SecurityTypeId, { where: { type: 'admin' } });
-        const is_admin = search ? true : false;
+        const user = await User.findOne({
+            where: {
+                id
+            },
+            include: SecurityType
+        });
+        const is_admin = user.SecurityType.type === 'admin';
 
         // Store results to locals http://expressjs.com/en/api.html#res.locals
         res.locals.user = { id, is_admin };

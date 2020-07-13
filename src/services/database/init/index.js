@@ -91,10 +91,10 @@ async function populateBasicInfo() {
             SecurityTypeId: (await SecurityType.findOne({ where: { type: 'admin' } })).get('id')
         },
         {
-            full_name: 'Lucernita',
-            username: 'Lu',
+            full_name: 'Agostina De Las Nieves',
+            username: 'adln',
             email: 'lucernita@asdads.com',
-            password: 'lucernitax100',
+            password: 'anotherpassword',
             phone: '+5493455559333',
             address: 'Riobamba 918',
             SecurityTypeId: (await SecurityType.findOne({ where: { type: 'user' } })).get('id')

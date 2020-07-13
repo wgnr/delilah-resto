@@ -64,4 +64,15 @@ router.put("/:id",
     ordersCtrl.updateStatus
 );
 
+// Delete order
+router.delete("/:id",
+    authCtrl.validateToken,
+    authCtrl.adminAccessOnly,
+    [
+        ordersCtrl.checkParamOrderId,
+        checkErrorMessages
+    ],
+    ordersCtrl.deleteOrder
+);
+
 module.exports = router;

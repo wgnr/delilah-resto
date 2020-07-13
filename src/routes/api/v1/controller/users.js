@@ -8,7 +8,7 @@ const { sequelize } = require(path.join(__dirname, '..', '..', '..', '..', 'serv
 const { checkSchema } = require('express-validator');
 
 
-const checkBodyUser = checkSchema({
+const checkBodyNewUser = checkSchema({
     full_name: {
         in: 'body',
         optional: false,
@@ -76,8 +76,79 @@ const checkBodyUser = checkSchema({
                 min: 8
             }
         }
+    }
+});
+
+const checkBodyUpdateUser = checkSchema({
+    full_name: {
+        in: 'body',
+        optional: true,
+        isLength: {
+            errorMessage: 'Full name should have between 1 and 64 characters',
+            options: {
+                min: 1,
+                max: 64
+            }
+        },
+
     },
-    id_security_type: {
+    username: {
+        in: 'body',
+        optional: true,
+        isLength: {
+            errorMessage: 'username should have between 3 and 64 characters',
+            options: {
+                min: 3,
+                max: 64
+            }
+        },
+        custom: {
+            options: async (username) => {
+                const validInfo = await User.findOne({ where: { username } });
+                if (validInfo !== null)
+                    return Promise.reject(`Username ${username} has been already taken.`);
+            }
+        }
+    },
+    email: {
+        in: 'body',
+        optional: true,
+        isEmail: true,
+        custom: {
+            options: async (email) => {
+                const validInfo = await User.findOne({ where: { email } });
+                if (validInfo !== null)
+                    return Promise.reject(`Email ${email} has been already registered.`);
+            }
+        }
+    },
+    phone: {
+        in: 'body',
+        optional: true,
+        isNumeric: true
+    },
+    address: {
+        in: 'body',
+        optional: true,
+        isLength: {
+            errorMessage: 'Address should have between 1 and 128 characters',
+            options: {
+                min: 1,
+                max: 128
+            }
+        }
+    },
+    password: {
+        in: 'body',
+        optional: true,
+        isLength: {
+            errorMessage: 'Password should at least have 8 elements.',
+            options: {
+                min: 8
+            }
+        }
+    },
+    SecurityTypeId: {
         in: 'body',
         optional: true,
         isInt: true,
@@ -85,7 +156,7 @@ const checkBodyUser = checkSchema({
         custom: {
             options: async (securityTypeId, { req }) => {
                 // Only an admin can change security type
-                if (!req.locals.user.is_admin) return 'Only admins can change security types.';
+                if (!req.locals.user.is_admin) return Promise.reject('Only admins can change security types.');
 
                 const validInfo = await SecurityType.findByPk(securityTypeId);
                 if (validInfo === null)
@@ -121,7 +192,7 @@ const checkOwnUserData = checkSchema({
 
                 // Check wheter user is requesting his own data
                 const userID = req.locals.user.id;
-                if (userID !== id) return "User can only see his own data.";
+                if (userID !== id) return Promise.reject("User can only see his own data.");
             }
         }
     }
@@ -172,14 +243,17 @@ const getUser = async id => {
 
 const updateUser = async (req, res) => {
     const { id } = req.params;
+
+    const user = User.findByPk(id);
+    // By default use original data, sequelize will update only modief data
     const {
-        address,
-        email,
-        full_name,
-        password,
-        phone,
-        securityTypeId,
-        username,
+        address = user.address,
+        email = user.email,
+        full_name = user.full_name,
+        password = user.password,
+        phone = user.phone,
+        SecurityTypeId = user.SecurityType,
+        username = user.username,
     } = req.body;
 
     await User.update(
@@ -189,7 +263,7 @@ const updateUser = async (req, res) => {
             full_name,
             password,
             phone,
-            securityTypeId,
+            SecurityTypeId,
             username,
         },
         { where: { id } }
@@ -244,7 +318,8 @@ const getFavouriteDishes = async (req, res) => {
 }
 
 module.exports = {
-    checkBodyUser,
+    checkBodyNewUser,
+    checkBodyUpdateUser,
     checkOwnUserData,
     checkParamIdUser,
     createNewUser,

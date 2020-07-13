@@ -18,7 +18,7 @@ router.get("/",
 // Create a new user
 router.post("/",
     [
-        usersCtrl.checkBodyUser,
+        usersCtrl.checkBodyNewUser,
         checkErrorMessages
     ],
     usersCtrl.createNewUser
@@ -41,7 +41,7 @@ router.put("/:id",
     [
         usersCtrl.checkParamIdUser,
         usersCtrl.checkOwnUserData,
-        usersCtrl.checkBodyUser,
+        usersCtrl.checkBodyUpdateUser,
         checkErrorMessages
     ],
     usersCtrl.updateUser

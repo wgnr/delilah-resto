@@ -39,7 +39,7 @@ Change `example_of_your_passphrase` for anything you want, this will be used for
 
 So far we already have installed nodejs and set up our DB !
 
-**Note**: There is only one admin created so far which username is `admin` and its password is `admin`.
+**Note**: There is only one admin created so far which username is `admin` and its password is `admin`. There is also a regular user created who username is `adln` and its password is `anotherpassword`.
 
 ### 3. Initiating server
 Open a terminal a run the following command. If you close terminal, server ends.
@@ -76,6 +76,7 @@ Here is a brief summary of all available endpoints.
 |  POST  | /orders            | Create new order                              |
 |   GET  | /orders/{id}       | Get order info                                |
 |   PUT  | /orders/{id}       | Update order status                           |
+|DELETE  | /orders/{id}       | Delete order                                  |
 
 ### Endpoints Testing
 A complete list of functional endpoints with examples are included in [this file](./test/delilah-resto-endpoints.postman_collection), you only have to import them in the [Postman](https://www.postman.com/) application.

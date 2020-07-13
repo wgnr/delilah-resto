@@ -13,7 +13,7 @@ const sequelize = new Sequelize({
     username: conn.USERNAME,
     logging: false,
     // For reading  dates correctly from DB
-    // useUTC: true, //for reading from database
+    useUTC: false, //for reading from database
     dialectOptions: {
         dateStrings: true,
         typeCast: true,
