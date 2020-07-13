@@ -1,5 +1,5 @@
 # Delilah Restó 🍽
-The goal of this proyect is to build an API REST to manage a food store's orders using nodejs and MySQL. Designing its architecture, DB entity relationship diagram and API endpoints with documentation. 
+The goal of this project is to build an API REST to manage a food store's orders using nodejs and MySQL. Designing its architecture, DB entity relationship diagram and API endpoints with documentation. 
 
 #### Key Features
 - User sign in with JWT
