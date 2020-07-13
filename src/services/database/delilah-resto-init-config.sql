@@ -181,7 +181,7 @@ CREATE TABLE users (
 
 INSERT INTO users (id, full_name, username, email, `password`, phone, address, SecurityTypeId) VALUES
 (1, 'Juan Wagner', 'admin', 'juanswagner@asdads.com', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', '+5493455559542', 'Ocampo 918', 1),
-(2, 'Lucernita', 'Lu', 'lucernita@asdads.com', '686415d6a3c0111cbf4be31dfeba3255c235c5de4e1b567bdf79e7ad0a6e65c41e1c706434349e22c44528c68e12709c6221b5e0629ea41ac3875f3c34ffd495', '+5493455559333', 'Riobamba 918', 2);
+(2, 'Agostina De Las Nieves', 'adln', 'lucernita@asdads.com', '42024e4f52ebc7b8f24b1aba3aab1c149504b13d76610d5f27e0fe47ed834a29a2ba54935b425ee44a8c9c359d82c3fe95a7e91d95267e83bb2a34d59d433b9b', '+5493455559333', 'Riobamba 918', 2);
 
 --
 -- Indexes for dumped tables
