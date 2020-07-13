@@ -39,7 +39,7 @@ Change `example_of_your_passphrase` for anything you want, this will be used for
 
 So far we already have installed nodejs and set up our DB !
 
-**Note**: There is only one admin created so far which username is `admin` and its password is `admin`. There is also a regular user created who username is `adln` and its password is `anotherpassword`.
+**Note**: There is only one admin created so far which username is `admin` and its password is `admin`. There is also a regular user created whose username is `adln` and its password is `anotherpassword`.
 
 ### 3. Initiating server
 Open a terminal a run the following command. If you close terminal, server ends.
