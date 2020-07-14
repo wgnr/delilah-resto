@@ -3,7 +3,7 @@ const { checkSchema } = require('express-validator');
 const { DishesList } = require(path.join(__dirname, '..', '..', '..', '..', 'services', 'database', 'model'));
 
 
-const checkBodyDish = checkSchema({
+const checkBodyNewDish = checkSchema({
     name: {
         in: 'body',
         optional: false,
@@ -67,6 +67,70 @@ const checkBodyDish = checkSchema({
     }
 });
 
+const checkBodyUpdateDish = checkSchema({
+    name: {
+        in: 'body',
+        optional: true,
+        isAscii: true,
+        isLength: {
+            errorMessage: 'Dish name should have between 4 and 256 Ascii characters',
+            options: {
+                min: 4,
+                max: 256
+            }
+        },
+        trim: true,
+    },
+    name_short: {
+        in: 'body',
+        optional: true,
+        isAscii: true,
+        isLength: {
+            errorMessage: 'Dish short name should have between 1 and 32 Ascii characters',
+            options: {
+                min: 1,
+                max: 32
+            }
+        },
+        trim: true,
+    },
+    description: {
+        in: 'body',
+        optional: true,
+        isString: true,
+        isLength: {
+            errorMessage: 'Dish description can have at most 512 characters!',
+            options: {
+                max: 512
+            }
+        },
+        trim: true,
+    },
+    img_path: {
+        in: 'body',
+        optional: true,
+    },
+    price: {
+        in: 'body',
+        optional: true,
+        isEmpty: false,
+        isFloat: {
+            options: {
+                gt: 0,
+                locale: ['en-US']
+            },
+            errorMessage: 'Value should be positive and use en-US notation. Use dot (.) to separete decimals.'
+        },
+        toFloat: true
+    },
+    is_available: {
+        in: 'body',
+        optional: true,
+        isBoolean: true,
+        toBoolean: true
+    }
+});
+
 const checkParamDishId = checkSchema({
     id: {
         in: 'params',
@@ -122,13 +186,16 @@ const getDish = async (req, res) => {
 const updateDish = async (req, res) => {
     const { id } = req.params;
 
+    const originalDish = DishesList.findByPk(id);
+
+    // By default use original data, sequelize will update only modief data
     const {
-        description,
-        img_path,
-        is_available,
-        name_short,
-        name,
-        price,
+        description = originalDish.description,
+        img_path = originalDish.img_path,
+        is_available = originalDish.is_available,
+        name_short = originalDish.name_short,
+        name = originalDish.name,
+        price = originalDish.price,
     } = req.body;
 
     await DishesList.update(
@@ -143,8 +210,7 @@ const updateDish = async (req, res) => {
         { where: { id } }
     );
 
-    const dish = await DishesList.findByPk(id);
-    return res.status(200).json(dish);
+    return res.status(200).json(await DishesList.findByPk(id));
 };
 
 const deleteDish = async (req, res) => {
@@ -154,8 +220,9 @@ const deleteDish = async (req, res) => {
 }
 
 module.exports = {
-    checkBodyDish,
+    checkBodyNewDish,
     checkParamDishId,
+    checkBodyUpdateDish,
     createNewDish,
     deleteDish,
     getAllDishes,

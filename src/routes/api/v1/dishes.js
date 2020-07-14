@@ -19,7 +19,7 @@ router.post("/",
     authCtrl.validateToken,
     authCtrl.adminAccessOnly,
     [
-        dishesCtrl.checkBodyDish,
+        dishesCtrl.checkBodyNewDish,
         checkErrorMessages
     ],
     dishesCtrl.createNewDish
@@ -41,7 +41,7 @@ router.put("/:id",
     authCtrl.adminAccessOnly,
     [
         dishesCtrl.checkParamDishId,
-        dishesCtrl.checkBodyDish,
+        dishesCtrl.checkBodyUpdateDish,
         checkErrorMessages
     ],
     dishesCtrl.updateDish
